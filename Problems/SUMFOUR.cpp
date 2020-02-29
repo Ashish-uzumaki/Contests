@@ -6,7 +6,7 @@ typedef long long ll;
 typedef long double lld;
 typedef long long int lli;
 using namespace std;
-const int N = 1005;
+const int N = 1000001;
 const int MOD=1e9+7;
 const bool DEBUG = 1;
 #define sd(x) scanf("%d", &x)
@@ -102,98 +102,41 @@ void trace(const char *names, T &&arg1, Args &&... args) {
     trace(comma + 1, args...);
 }
 template <typename T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-const int LG = 20;
 int gcd(int a, int b) {
      if (b == 0)
         return a;
     return gcd(b, a % b);
 }
-vector<vector<int>>par(N, vector<int>(LG,0));
-vector<int>lvl(N, 0);
-map<int,vector<int>>g;
-
-void dfs(int u, int p){
-    lvl[u] = 1 + lvl[p];
-    par[u][0] = p;
-    for(int v: g[u]){
-        if(v == p) continue;
-        dfs(v ,u);
-    }
-}
-
-int lca(int u,int v){
-    
-    if(lvl[u] < lvl[v]) swap(u, v);
-    
-    int lg;
-    
-    for(lg = 0; (1 << lg) <= lvl[u]; lg++);
-    lg--;
-    
-    for(int i = lg; i >= 0; i--){
-        if(lvl[u] - (1<<i) >= lvl[v]){
-            u = par[u][i]; 
-        }
-    }
-
-    if( u == v) return u;
-    
-    for(int i = lg; i >= 0; i--){
-        if(par[u][i]!=-1 and par[u][i] != par[v][i]){
-            u = par[u][i];
-            v = par[v][i];
-        }
-    }
-    return par[u][0];
+inline void inp( int &n )
+{
+   n=0;
+   int ch=getchar_unlocked();int sign=1;
+   while(ch < '0' || ch > '9' ){if(ch=='-')sign=-1; ch=getchar_unlocked();}
+   while(ch >= '0' && ch <= '9' )
+           n = (n<<3)+(n<<1) + ch-'0', ch=getchar_unlocked();
+   n=n*sign;
 }
 int32_t main() {
     _
-    int r = 1;
-    RUN_T{
-        int n, x, y, m, u, v;
-        cin >> n;
-        int root = 1;
-        int flag = 0;
-        for(int i = 1; i <= n; i++ ){
-            lvl[i] = 0;
-        }
-        g.clear();
-        for(int i = 1; i <= n ;i++){
-            cin >> m;
-            for(int j = 0; j < m ;j++){
-                cin >> x;
-                if(!flag){
-                    root = i;
-                    flag = 1;
-                }
-                g[i].pb(x);
-                g[x].pb(i);
-            } 
-        }
-        for(int i = 0 ;i <= n; i++){
-            for(int j = 0; j <= LG; j++){
-                par[i][j] = -1;
-            }
-        }
-        lvl[0] = -1;
-        dfs(root,0);
-        // tr("yo");
-        for(int i = 1; i <= LG ;i++){
-            for(int j = 1; j <= n; j++){
-                if(par[j][i - 1] != -1){
-                    par[j][i] = par[par[j][i-1]][i-1];
-                } 
-            }
-        }
-        // tr("bro");
-        int q;
-        cin >> q;
-        cout<< "Case "<<r<<":"<<endl;
-        for(int i = 0; i < q; i++){
-            cin >> u >> v;
-            int ans = lca( u ,v);
-            cout << ans << endl;
-        }
-        r++;
+    int n;
+    inp(n);
+    // cin >> n;
+    vector<int> v1(n), v2(n), v3(n), v4(n);
+    for(int i = 0; i < n;i++){
+        inp(v1[i]); inp(v2[i]); inp(v3[i]); inp(v4[i]);
     }
+    vector<int>s1,s2;
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            s1.pb(v1[i] + v2[j]);
+            s2.pb(v3[i] + v4[j]);
+        }
+    }
+    int ans = 0;
+    sort(all(s2));
+    for(int i = 0; i < s1.size(); i++){
+        auto ip = equal_range(s2.begin(),s2.end(),-1*s1[i]);
+        ans += abs((ip.second - s2.begin()) - (ip.first - s2.begin())) ;
+    }
+    cout << ans << '\n';
 }
