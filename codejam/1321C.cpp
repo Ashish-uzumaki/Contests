@@ -107,56 +107,52 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    string prev = s;
+    for(int j = 25; j >=0 ; j--){
+        for(int k = 0 ; k < n ; k++){
+        string s1 = "";
+        for(int i = 0 ;i < prev.size(); i++){
+            int val = prev[i] - 'a';
+            if(i == 0){
+                int nex = prev[i+1] -'a';
+                if(val == j and nex == j - 1){
+                    continue;
+                }else{
+                     s1 += prev[i];
+                }
+            }
+            else if(i == prev.size()-1){
+                int pre = prev[i-1] - 'a';
+                if(val == j and pre == j - 1){
+                    continue;
+                }else{
+                     s1 += prev[i];
+                }
+            }else{
+                int nex = prev[i+1] -'a';
+                int pre = prev[i-1] - 'a';
+                if(val == j and (nex == j-1 or pre == j-1)){
+                    continue;
+                }else{
+                    s1 += prev[i];
+                }
+            }
+        }
+        prev = s1;
+        // tr(prev);
+        }
+    }
+    cout << s.size() - prev.size() <<endl;
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+}

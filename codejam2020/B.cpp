@@ -107,56 +107,66 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    _
+    int te;
+    cin >>te;
+    for(int t = 1; t <= te; t++){
+        int n;
+        cin >> n;
+        vector<pair<int,int>>v;
+        v.pb(mp(1,1));
+        int cnt = 1;
+        if( n > 1 and n < 501){
+            v.pb(mp(2,2));
+            cnt = 2;
+            for(int i = 2;i <= 500 ;i++){
+                if(cnt == n) break;
+                v.pb(mp(i,1));
+                cnt++;
+            }
+        }
+        if( n== 501){
+            v.pb(mp(2,2));
+            v.pb(mp(3,2));
+            cnt = 4;
+            for(int i = 3;i <= 500 ;i++){
+                v.pb(mp(i,1));
+                cnt++;
+                if(cnt == n) break;
+            }
+        }
+        if( n > 501){
+            int idx;
+            for(int i =1; i <= 500; i++){
+                if(cnt > n){
+                    idx = i;
+                    break;
+                }
+                cnt+=i;
+            }
+            cnt-=idx;
+            for(int i = 2; i <= idx;i++){
+                v.pb(mp(i,2));
+            }
+            // tr(cnt);
+            for(int i = idx;i <= 500 ;i++){
+                if(cnt == n) break;
+                v.pb(mp(i,1));
+                cnt++;
+            }
+            // tr(idx);
+        }
+        cout << "Case #" << t <<':'<< endl;
+        // tr(v.size(),cnt);
+        for(auto p :v){
+            cout << p.fi <<" "<<p.se<<endl;
+        }
+    }
+}

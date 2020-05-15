@@ -107,56 +107,30 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+int32_t main() {
+    _
+    vector<int>v(6);
+    for(int i =0; i< 6;i++){
+        cin >>v[i];
+    } 
+    int t= v[0];
+    int s = min(v[1],v[2]);
+    int j = v[3];
+    int e = v[4], f = v[5];
+    int ans = 0;
+    if( e >= f){
+        ans = ans + e*min(j,t);
+        j-=min(j,t);
+        if( j > 0){
+            ans = ans + f*min(j,s);
+        }
+    }else{
+        ans = ans + f*min(j,s);
+        j-=min(j,s);
+        if( j > 0){
+            ans = ans + e*min(j,t);
+        }
+    }
+    cout << ans;
+    
+}

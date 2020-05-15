@@ -107,56 +107,53 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    _
+    int n, m, x, y;
+    cin >> n >> m;
+    vector<pair<int,int>>v(n);
+    vector<pair<int ,int>>diff;
+    diff.pb(mp(-inf,-inf));
+    for(int i = 0 ;i < n; i++){
+        cin >> v[i].fi >> v[i].se;
+        int p1 = v[i].fi - v[i].se;
+        auto p2 = mp(p1, v[i].se);
+        diff.pb(p2);
+    }
+    sort(all(diff));
+    vector<int>pref_b(n+1, 0), pref_d(n+1, 0);
+    for(int i = 1 ;i <= n; i++){
+        pref_b[i] = diff[i].se + pref_b[i-1];
+        pref_d[i] = diff[i].se + diff[i].fi + pref_d[i-1];
+    }
+    unordered_map<int,int>mt;
+    for(int i = 0 ; i < n; i++){
+        int a = v[i].fi;
+        int c = v[i].se;
+        int val = v[i].fi - v[i].se;
+        int maxi = -1e9;
+        auto p = mp(val , maxi);
+        auto idx = upper_bound(diff.begin(), diff.end(),p) - diff.begin();
+        int ans = pref_b[n] - pref_b[idx - 1] + (n - idx + 1) * a;
+        ans += pref_d[idx - 1] - pref_d[0] + (idx - 1) * c;
+        ans -= (a + c);
+        mt[i + 1] = ans;
+    }
+    for(int i = 0 ;i < m; i++){
+        cin >> x >> y;
+        --x, --y;
+        int val = min( v[x].fi + v[y].se , v[x].se + v[y].fi);
+        mt[x + 1] -= val;
+        mt[y + 1] -= val;  
+    }
+    for(int i =1; i<= n; i++){
+        cout << mt[i] <<" ";
+    }
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+}

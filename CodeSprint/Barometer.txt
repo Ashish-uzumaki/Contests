@@ -1,0 +1,14 @@
+1. Barometer collects system metrics and events to aid in the monitoring of the NFVI and provide means for these metrics 
+   and events to be relayed to higher level fault management systems for enforcement and corrective actions
+
+2. Barometer uses collectd to collect the system metrics, and works closely with the collectd community
+
+3. Increasing the automated test coverage benifits collectd as well as Barometer
+
+4. Major work items for the Jerma release are improving the test infrastructure for collectd 
+   (particularly for Barometer-contributed plugins)
+
+5. This project will involve automating existing tests for individual plugins
+
+6. Config files directory is mapped as virtual shared directory to 
+   barometer-collectd container in /opt/collectd/etc/collectd.conf.d directory.

@@ -107,56 +107,72 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+vector<int>ord;
+vector<vector<int>>g;
+void dfs(int root, int par){
+    ord.pb(root);
+    for(auto p: g[root]){
+        if(p != par){
+            dfs(p, root);
+        }
+    }
+}
+int32_t main() {
+    _
+    int n ,x ,y;
+    cin >> n;
+    g.resize(n+1);
+    vector<vector<int>>c(4,vector<int>(n + 1, 0));
+    for(int i = 1; i <= 3; i++){
+        for(int j = 1; j <= n; j++){
+                cin >> c[i][j];
+        }
+    }
+    for(int i = 1; i <= n - 1; i++){
+        cin >> x >> y;
+        g[x].pb(y);
+        g[y].pb(x);
+    }
+    int root;
+    for(int i = 1; i <= n; i++){
+        if(g[i].size() >= 3){
+            cout << -1 << endl; 
+            return 0;
+        }else{
+            if(g[i].size() == 1){
+                root = i;
+            }
+        }
+    }
+    dfs(root, -1);
+    vector<int> perm = {1, 2, 3};
+    vector<int> best_perm;
+    int best = 1e18;
+    do {
+        int ans = 0;
+ 
+        for (int i = 0; i < n; i++)
+            ans += c[perm[i % 3]][ord[i]];
+ 
+        if (ans < best) {
+            best = ans;
+            best_perm = perm;
+        }
+    } while (next_permutation(perm.begin(), perm.end()));
+ 
+    cout << best << '\n';
+    vector<int> answer(n + 1, -1);
+ 
+    for (int i = 0; i < n; i++)
+        answer[ord[i]] = best_perm[i % 3];
+ 
+    for (int i = 1; i <= n; i++){
+        cout << answer[i] <<" ";
+    }
+}

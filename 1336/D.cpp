@@ -107,56 +107,65 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int get(int p ,int val ,vector<int>&v, int rg, int r){
+    int mini = 3e18;
+    int gb = 0;
+    int br = 0;
+    if( p < v.size()){
+        gb =  abs(val - v[p]) * abs(val - v[p]);
+        br =  abs(v[p] - r) * abs(v[p] - r);
+        mini = min(rg + gb + br, mini);
+    }
+    if( p - 1 >= 0){
+        gb =  abs(val - v[p - 1]) * abs(val - v[p - 1]);
+        br =  abs(v[p - 1] - r) * abs(r - v[p - 1]);
+        mini = min(rg + gb + br, mini);
+    }
+    return mini;
+}
+int32_t main() {
+    RUN_T{
+        int n, m ,k;
+        cin >> n >> m >> k;
+        vector<int>r(n), g(m), b(k);
+        for(int i = 0; i < n; i++){
+            cin >> r[i];
+        }
+        for(int i = 0; i < m; i++){
+            cin >> g[i];
+        }
+        for(int i = 0; i < k; i++){
+            cin >> b[i];
+        }
+        sort(all(r));
+        sort(all(g));
+        sort(all(b));
+        int ans = 3e18;
+        int val1 = 0;
+        int rg = 0, gb = 0, br = 0 ;
+        for(int i = 0 ; i < n; i++){
+            auto p = upper_bound(g.begin(), g.end(), r[i]) - g.begin();
+            int val = 3e18;
+            if( p < m ){
+                int key  = g[p];
+                rg =  (r[i] - key)*(r[i] - key);
+                auto q = upper_bound(b.begin(), b.end(), key) - b.begin();
+                val = min(val, get(q, key, b, rg, r[i])); 
+            }
+            if(p - 1 >= 0){
+                int key  = g[p-1];
+                rg =  (r[i] - key)*(r[i] - key);
+                auto q = upper_bound(b.begin(), b.end(), key) - b.begin();
+                val = min(val, get(q, key,  b, rg, r[i]));
+            }
+            ans = min(ans, val);   
+        }
+        cout << ans << endl;
+    }
+}

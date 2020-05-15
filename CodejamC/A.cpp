@@ -107,56 +107,49 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    int te;
+    cin>> te;
+    for(int k =1 ; k <=te; k++){
+        int x, y;
+        cin >> x >> y;
+        string m;
+        cin >> m;
+        map<pair<int,int> , vector<int>>mt;
+        int cnt = 1;
+        for(int i = 0; i < m.length(); i++){
+            if(m[i] == 'S'){
+                y-=1;
+            }else if(m[i] == 'N'){
+                y+=1;
+            }else if(m[i] == 'E'){
+                x+=1;
+            }else{
+                x-=1;
+            }
+            mt[mp(x,y)].pb(cnt);
+            cnt++;
+        }
+        int ans = 1e8;
+        for(auto p: mt){
+            pair<int,int> cor = p.fi;
+            int tim = abs(cor.fi) + abs(cor.se);
+            for(int t :p.se){
+                if(t >= tim){
+                    ans = min(ans, t);
+                }
+            }
+        }
+        if(ans == 1e8){
+            cout << "Case #" << k <<": "<<"IMPOSSIBLE"<<endl;
+        }else{
+            cout << "Case #" << k <<": "<<ans<<endl;
+        }
+    }
+}

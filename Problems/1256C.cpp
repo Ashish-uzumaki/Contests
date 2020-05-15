@@ -107,56 +107,45 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    int n , m ,d;
+    cin >> n >> m >> d;
+    vector<int>v(m);
+    int pos = 0;
+    for(int i = 0; i < m; i++){
+        pos += d;
+        cin >> v[i];
+        pos += v[i] - 1;
+    }
+    pos += d;
+    if(pos < n + 1) {
+        cout << "NO" << endl;
+        return 0;
+    }
+    vector<int>ans(n + 1, 0);
+    int sum = 0;
+    for(int i = m - 1; i >= 0; i--){
+        sum += v[i];
+    }
+    pos = 0;
+    for(int i = 0; i < m; i++){
+        if(pos + sum + d - 1 <= n) pos+=d;
+        else pos = n - sum + 1;
+        for(int j = pos ; j<= pos + v[i] -1; j++ ){
+            ans[j] = i+1;
+        }
+        pos += v[i] - 1;
+        sum -= v[i];
+    }
+    cout << "YES" << endl;
+    for(int i = 1 ;i <= n ;i++){
+        cout << ans[i] <<" ";
+    }
+   
+}

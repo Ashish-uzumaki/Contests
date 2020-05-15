@@ -107,56 +107,58 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+vector<int>prim;
+map<int,int>mt;
+int vis[N];
+void sieve(){
+    for(int i = 2; i <= N; i++){
+        if(vis[i] != 1){
+            prim.pb(i);
+            mt[i] = 1;
+            for(int j = i; j <= N; j+=i){
+                vis[j] = 1;
+            }
+        }
+    }
+}
+int32_t main() {
+    sieve();
+    int n;
+    cin >> n;
+    vector<int>v(n + 1, 0);
+    vector<int>b(n+1, 0);
+    for(int i = 1; i <= n; i++){
+        cin >> v[i];
+        b[v[i]] = i;
+    }
+    vector<pair<int,int>>ans;
+    for(int i = 1; i <= n; i++){
+           if(b[i] != i){
+                int j1 = i;
+                int j2 = b[i];
+                int k = j2 - j1 + 1;
+                while(j2 > j1){
+                    while(mt[k] != 1){
+                        k--;
+                    }
+                    swap(v[j2], v[j2 - k + 1]);
+                    b[v[j2]] = j2;
+                    b[v[j2 - k + 1]] = j2 - k + 1;
+                    ans.pb(mp(j2 - k + 1, j2));
+                    j2 = j2 - k + 1;
+                    k = j2 - j1 + 1;
+                }
+            }
+    }
+    // tr(v);
+    cout << ans.size() << endl;
+    for(int i = 0; i < ans.size(); i++){
+       cout << ans[i].fi <<" "<< ans[i].se << endl;
+    }
 } 

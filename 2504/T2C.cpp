@@ -107,56 +107,64 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+bool win( int aa , int bb ){
+  return (aa - bb + 3) % 3 == 1;
+}
+int aa[ 4 ][ 4 ];
+int bb[ 4 ][ 4 ];
+int sa[ 1021 ];
+int sb[ 1021 ];
+int gt[ 4 ][ 4 ];
+int32_t main(){
+  int k , a , b;
+  cin >> k >> a >> b;
+  a --; b --;
+  for( int i = 0 ; i < 3 ; i ++ )
+    for( int j = 0 ; j < 3 ; j ++ ){
+      cin >> aa[ i ][ j ];
+      aa[ i ][ j ] --;
+    }
+  for( int i = 0 ; i < 3 ; i ++ )
+    for( int j = 0 ; j < 3 ; j ++ ){
+      cin >> bb[ i ][ j ];
+      bb[ i ][ j ] --;
+    }
+  int sca = 0 , scb = 0;
+  for( int i = 1 ; i <= k ; i ++ ){
+    if( !gt[ a ][ b ] ){
+      if( win( a , b ) ) sca ++;
+      if( win( b , a ) ) scb ++;
+      sa[ i ] = sca;
+      sb[ i ] = scb;
+      gt[ a ][ b ] = i;
+      int na = aa[ a ][ b ];
+      int nb = bb[ a ][ b ];
+      a = na; b = nb;
+    }else{
+      int dlt = i - gt[ a ][ b ];
+      int res = (k - i + 1) / dlt;
+      int da = sca - sa[ gt[ a ][ b ] - 1 ];
+      int db = scb - sb[ gt[ a ][ b ] - 1 ];
+      sca += da * res;
+      scb += db * res;
+      i += res * dlt;
+      while( i <= k ){
+        if( win( a , b ) ) sca ++;
+        if( win( b , a ) ) scb ++;
+        int na = aa[ a ][ b ];
+        int nb = bb[ a ][ b ];
+        a = na; b = nb;
+        i ++;
+      }
+      break;
+    }
+  }
+  cout << sca << " " << scb << endl;
+}

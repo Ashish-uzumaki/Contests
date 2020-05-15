@@ -107,56 +107,87 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    _
+    RUN_T{
+        string s;
+        cin >> s;
+        map<int,int>mt;
+        set<int>st;
+        for(int i = 0; i < s.length(); i++){
+            mt[s[i] - 'a'] += 1; 
+            st.insert(s[i] - 'a');
+        }
+        vector<int>odd, even;
+        for(auto p: st){
+            if( p % 2){
+                odd.pb(p);
+            }else{
+                even.pb(p);
+            }
+        }
+        if(odd.size() == 0 or even.size() == 0){
+            cout << s<<endl;
+        }else{
+            vector<vector<int>>v;
+            int cnt = 0;
+            while(cnt < 2){
+                if(cnt == 1){
+                    swap(even , odd);
+                }
+                vector<int>temp_even = even;
+                vector<int>temp_odd = odd;
+                for(int i : temp_even){
+                    temp_odd.pb(i);
+                }
+                v.pb(temp_odd);
+                temp_odd = odd;
+                temp_even = even;
+                if(cnt == 1){
+                    reverse(all(temp_odd));
+                }else{
+                    reverse(all(temp_even));
+                }
+                for(int i : temp_even){
+                    temp_odd.pb(i);
+                }
+                v.pb(temp_odd);
+                cnt++; 
+            }
+            vector<int> ans;
+            for(auto p: v){
+                int flag = 0;
+                for(int i = 1; i < p.size(); i++){
+                    if(abs(p[i]-p[i-1]) == 1){
+                        flag = 1;
+                        break;
+                    }
+                }
+                if(flag == 0){
+                    ans = p;
+                    break;
+                }
+            }
+            if(ans.size() == 0){
+                cout << "No answer"<<endl;
+            }else{
+                string str ="";
+                for(int i:ans){
+                    while(mt[i]){
+                        str+=(i+'a');
+                        mt[i]--;
+                    }
+                }
+                cout << str << endl;
+            }
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
+        }
 
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+    }
+}

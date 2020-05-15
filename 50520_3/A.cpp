@@ -107,56 +107,64 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    int n;
+    cin >> n;
+    vector<int>v(2*n);
+    map<int,vector<int>>mt;
+    for(int i = 0; i < 2 * n; i++){
+        cin >> v[i];
+        mt[v[i]].pb(i);
+    }
+    set<int>st1,st2;
+    for(auto p: mt){
+        if(p.se.size() > 1){
+            st1.insert(mt[p.fi].back());
+            mt[p.fi].pop_back();
+            st2.insert(mt[p.fi].back());
+            mt[p.fi].pop_back();
+        }else if(p.se.size() == 1){
+            if(st1.size() < st2.size()){
+                st1.insert(mt[p.fi].back());
+            }else{
+                st2.insert(mt[p.fi].back());
+            }
+            mt[p.fi].pop_back();
+        }
+    }
+    // tr(st1);
+    // tr(st2);
+    cout << st1.size() * st2.size() << endl;
+    vector<int>vis(2*n, 0);
+    for(auto p: st1){
+        vis[p] = 1;
+    }
+    for(auto p: st2){
+        vis[p] = 2;
+    }
+    for(auto p: mt){
+        while(mt[p.fi].size() > 0){
+            if(st1.size() > st2.size()){
+                st2.insert(mt[p.fi].back());
+                vis[mt[p.fi].back()] = 2;
+                mt[p.fi].pop_back();
+            }else{
+                st1.insert(mt[p.fi].back());
+                vis[mt[p.fi].back()] =1;
+                mt[p.fi].pop_back();
+            }
+        }
+    }
+    for(int i  = 0; i < 2* n;i++){
+        cout << vis[i] <<" ";
+    }
+    cout << endl;
+    // cout << cnt1[1] <<" "<< cnt1[2] << endl;
+    
+}

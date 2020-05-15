@@ -15,7 +15,6 @@ const bool DEBUG = 1;
 #define endl "\n"
 #define fi first
 #define se second
-#define vv vector<vector<int> > 
 #define eb emplace_back
 #define fbo find_by_order
 #define ook order_of_key
@@ -108,24 +107,93 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int32_t main() {
-    _
-    int n; 
-    cin >> n;
-    vector<int>v(n + 1);
-    for (int i = 1; i <= n; i++) {
-        cin >> v[i];
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
     }
-    vector<vector<int>>dp(n + 2,vector<int>(n + 2, 0));
-    for(int len = 1; len <= n; len++){
-        for(int i = 1; i + len - 1 <= n; i++){
-            int r = i + len - 1;
-            if( len % 2 == n % 2){
-                dp[i][r] = max( dp[i+1][r] + v[i], dp[i][r - 1] + v[r]);
-            }else{
-                dp[i][r] = min( dp[i+1][r] - v[i], dp[i][r - 1] - v[r]);
+}
+int dx[]={-1,0,1,0};
+int dy[]={0,1,0,-1};
+vector<vector<int>>visit;
+int n,m;
+
+bool inside(int x,int y){
+    if(x < 0 or y < 0 or x >= n or y >= m){
+        return false;
+    }
+    return true;
+}
+
+vector<vector<char>>v;
+void dfs(int x,int y){
+    if(visit[x][y])
+        return;
+    visit[x][y]=1;
+    for(int i=0;i<4;i++){
+        if(inside(x + dx[i],y + dy[i]) && v[x+dx[i]][y+dy[i]] == '#'){
+            dfs(x + dx[i], y + dy[i]);
+        }
+    }
+}
+int32_t main() {
+    // int n , m;
+    cin >> n >> m;
+    v.resize(n + 1, vector<char>(m + 1));
+    visit.resize(n+1,vector<int>(m+1,0));
+    set<pair<int,int>>st;
+    for(int i = 0; i < n; i++){
+        for(int j = 0 ; j < m ;j++){
+            cin >> v[i][j];
+            if(v[i][j] == '#'){
+                st.insert(mp(i,j));
             }
         }
     }
-    cout << dp[1][n] << endl;
+    vector<pair<int,int>>temp;
+    for(auto p: st){
+        temp.pb(p);
+    }
+    dfs(temp[0].fi,temp[0].se);
+    int ans = 0;
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < m; j++){
+            ans += visit[i][j];       
+        }
+    }
+    if(ans != temp.size()){
+        cout << 0 << endl;
+        return 0;
+    }
+    if(temp.size() == 1 or temp.size() == 2){
+        cout << -1 << endl;
+        return 0;
+    }
+    // tr(temp.size());
+    for(int i  = 0; i < temp.size(); i++){
+        auto p = temp[i];
+        ans = 0;
+        v[p.fi][p.se] = '.';
+        visit.clear();
+        visit.resize(n+1, vector<int>(m+1, 0));
+        if( i == 0){
+            dfs(temp[i + 1].fi, temp[i + 1].se);
+        }else if(i == temp.size() - 1){
+            dfs(temp[i - 1].fi, temp[i - 1].se);
+        }else{
+            dfs(temp[i + 1].fi, temp[i + 1].se);
+        }
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                ans+=visit[i][j];       
+            }
+        }
+        if(ans != st.size() - 1){
+            cout << 1;
+            return 0; 
+        }
+        v[p.fi][p.se] = '#';
+    }
+    cout << 2 << endl;
+    return 0;
 }

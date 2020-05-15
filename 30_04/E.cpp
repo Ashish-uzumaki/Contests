@@ -19,6 +19,7 @@ const bool DEBUG = 1;
 #define fbo find_by_order
 #define ook order_of_key
 #define pb(x) push_back(x)
+#define P pair<int,int>
 #define mp(x, y) make_pair(x, y)
 #define LET(x, a) __typeof(a) x(a)
 #define foreach(it, v) for (LET(it, v.begin()); it != v.end(); it++)
@@ -107,56 +108,82 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
+struct edge{
+    int to, cost, i;
+    edge(int _to, int _cost, int _i){
+        to = _to, cost = _cost, i = _i;
+    }
+};
+ 
+int n,m,k,a,b,y;
+vector<edge> G[N];
+vector<int>dis;
+int prv[N], pvi[N];
+vector<int> res;
+ 
+void dijkstra(){
 
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
+    dis.resize(N, inf);
+    dis[0] = 0;
+    priority_queue<P, vector<P>, greater<P> > pque;
+    pque.push({0, 0});
+ 
+    while(!pque.empty()){
+        P p = pque.top(); pque.pop();
+        int i = p.second;
+        int dist = p.first;
+        if(dist > dis[i]) continue;
+ 
+        for(edge e : G[i]){
+            if(e.cost + dis[i] < dis[e.to]){
+                dis[e.to] = e.cost + dis[i];
+                pque.push({dis[e.to], e.to});
+                prv[e.to] = i;
+                pvi[e.to] = e.i;
+            }
+        }
+    }
+}
+ 
+int cur_edges;
+void dfs(int i, int par){
+    if(cur_edges == 0) return ;
+    for(auto e : G[i]){
+        if(e.to != par && cur_edges > 0){
+            res.push_back(e.i);
+            cur_edges--;
+            dfs(e.to, i);
+        }
+    }
+}
+ 
+int32_t main(){
+    _
+    cin >> n >> m >> k;
+    for(int i = 0; i < m; i++){
+        cin >> a >> b >> y;
+        a--, b--;
+        G[a].push_back(edge(b, y, i));
+        G[b].push_back(edge(a, y, i));
+    }
+    dijkstra();
 
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
+    for(int i = 0; i < n; i++) G[i].clear();
+    for(int i = 1; i < n; i++){
+        G[prv[i]].push_back(edge(i, 1, pvi[i]));
+    }
+ 
+    cur_edges = k;
+    dfs(0, -1);
 
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+    cout << res.size() << endl;
+    for(int x : res) cout << x + 1 << " ";
+ 
+}

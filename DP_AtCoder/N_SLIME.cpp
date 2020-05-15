@@ -107,56 +107,35 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+int32_t main() {
+    _
+    int n;
+    cin >> n;
+    vector<int>v(n + 1),s(n+1,0);
+    vector<vector<int>>dp(n + 1, vector<int>(n+1,0));
+    for(int i = 1; i <= n; i++){
+         cin >> v[i];
+         s[i] = s[i-1] + v[i];
+         dp[i][i] = 0;
+    }
+    int ans = 0;
+    for(int len = 2; len <= n ; len++){
+        for(int l = 1; l + len - 1 <= n; l++){
+            int r = l + len - 1;
+            dp[l][r] = inf;
+            for(int k = l; k < r; k++){
+                dp[l][r] = min( dp[l][r] , dp[l][k] + dp[k+1][r] + s[r] - s[l-1]);
+            }
+        }
+    }
+    cout << dp[1][n] << endl;
+    return 0;
+}
+// 3 2 2 2
+// my previous greedy merging techinque will fail in this test case as according to my algo answer will be 
+// (3+(2+2)+2) but optimal is ((3+2) + (2+2))
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+//in merging technique start form the back
+// dp[l][r] — minimum cost to merge from l to r Notice that in the last operation we will merge two 
+// consecutive blocks, and their total sum will be the sum of all slimes.
+//  So dp[l][r] = min(dp[l][k] + dp[k][r]) + a[l] + a[l + 1] + ... + a[r]. Which is O(n3)

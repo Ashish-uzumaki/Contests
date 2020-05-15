@@ -107,56 +107,107 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int n, m, check=1;
+int out[N], edges[N][2];
+set<int> g[N];
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
+void dfs(int k)
+{
+	int ct=0, store=-1, ct2=0;
+	out[k]=0;
+	for(auto it:g[k])
+	{
+		ct2++;
+		if(out[it]==1)
+		{
+			ct++;
+			store=it;
+		}
+		out[it]--;
+	}
+	if(ct!=1&&ct2>=1)
+	{
+		check=0;
+		return;
+	}
+	if(store!=-1)
+		dfs(store);
+}
 
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
+int check1(int k)
+{
+	check=1;
+	for(int i=1;i<=n;i++)
+	{
+		out[i]=0;
+		g[i].clear();
+	}
+	for(int i=1;i<=k;i++)
+	{
+		g[edges[i][1]].insert(edges[i][0]);
+		out[edges[i][0]]++;
+	}
+	int ct=0;
+	for(int i=1;i<=n;i++)
+	{
+		if(!out[i])
+			ct++;
+	}
+	if(ct!=1)
+		return 0;
+	for(int i=1;i<=n;i++)
+	{
+		if(!out[i])
+		{
+			dfs(i);
+			break;
+		}
+	}
+	if(!check)
+	{
+		return 0;
+	}
+	return 1;
+}
 
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
+int binsearch(int lo, int hi)
+{
+	int check2=0;
+	while(lo<=hi)
+	{
+		if(lo==hi)
+			check2=1;
+		int mid=(lo+hi)>>1;
+		if(check1(mid))
+			hi=mid;
+		else
+			lo=mid+1;
+		if(check2)
+			break;
+	}
+	if(check1(lo))
+		return lo;
+	else
+		return -1;
+}
 
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+int32_t main()
+{
+	_
+	cin>>n>>m;
+	for(int i=1;i<=m;i++)
+	{
+		int u, v;
+		cin>>u>>v;
+		edges[i][0]=u;
+		edges[i][1]=v;
+	}
+	int ans=binsearch(1, m);
+	cout<<ans;
+}

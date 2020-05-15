@@ -107,56 +107,66 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int n, m;
+vector<vector<int>>g;
+vector<int> bfs(int x){
+    queue<int>q;
+    q.push(x);
+    vector<int>dist(n+1, 0);
+    vector<int>vis(n+1, 0);
+    int par = -1;
+    dist[x] = 0;
+    vis[x] = 1;
+    while(!q.empty()){
+        int r = q.front();
+        q.pop();
+        for(int p: g[r]){
+            if(vis[p] != 1){
+                dist[p] = dist[r] + 1;
+                vis[p] = 1;
+                q.push(p);
+            }
+        }
+    }
+    return dist;
+}
+int32_t main() {
+    RUN_T{
+        int a, b ,c, x, y;
+        cin >> n >> m >> a >> b >> c;
+        --a, --b, --c;
+        vector<int>v(m);
+        for(int i = 0; i < m; i++){
+            cin >> v[i];
+        }
+        g.clear();
+        g.resize(n + 1);
+        for(int i = 0; i < m; i++){
+            cin >> x >> y;
+            --x,--y;
+            g[x].pb(y);
+            g[y].pb(x); 
+        }
+        vector<int> dist1 = bfs(a);
+        vector<int> dist2 = bfs(b);
+        vector<int> dist3 = bfs(c);
+        sort(all(v));
+        vector<int> pref(m + 1, 0);
+        pref[0] = 0;
+        for(int i = 1; i <= m; i++){
+            pref[i] = pref[i-1] + v[i-1];
+        }
+        int ans = 1e18;
+		for (int i = 0; i < n; ++i) {
+			if (dist1[i] + dist2[i] + dist3[i] > m) continue;
+			ans = min(ans, pref[dist2[i]] + pref[dist1[i] + dist2[i] + dist3[i]]);
+		}
+		cout << ans << endl;
+    }
+}

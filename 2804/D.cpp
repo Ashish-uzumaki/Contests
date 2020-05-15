@@ -107,56 +107,57 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+vector<int>pref;
+map<int,vector<int>>mt;
+int solve(int idx){
+    int i = lower_bound(all(pref), idx) - pref.begin();
+    auto p = mt[i];
+    // tr(i);
+    if(p.size() == 1){
+        return p[0];
+    }
+    int l = p[0];
+    idx -= pref[i-1];
+    int j = (idx % l);
+    if( j == 0){
+        j = l;
+    }
+    // tr(idx, i, j, l);
+    int ans = solve(j);
+    return ans; 
+}
+int32_t main() {
+    _
+    int m ,stg, x, l, c;
+    cin >> m;
+    pref.resize(m + 1);
+    pref[0] = 0;
+    for(int i = 1; i <= m; i++){
+        cin >> stg;
+        if(stg == 1){
+            cin >> x;
+            mt[i].pb(x);
+            pref[i] = pref[i-1] + 1;
+        }else{
+            cin >> l >> c;
+            mt[i].pb(l);
+            mt[i].pb(c);
+            pref[i] = pref[i-1] + l * c;
+        }
+    }
+    int n;
+    // tr(pref);
+    cin >> n;
+    vector<int>v(n);
+    for(int i = 0; i < n; i++){
+        cin >> v[i];
+        int idx = solve(v[i]);
+        cout << idx <<" ";
+    }
+}

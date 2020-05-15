@@ -107,56 +107,96 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+bool check(vector<string>v){
+    string fin = v.back();
+    map<string, int> mt;
+    string pre = "";
+    mt[pre] = 1;
+    mt[v.back()] = 1;
+    int n = fin.length();
+    for(int i = 0; i < n; i++){
+        pre += fin[i];
+        mt[pre] = 1;
+    }
+    for(int i = 0; i < v.size();i++){
+        if(mt[v[i]]!=1) return false;
+    }
+    return true;
+}
+int32_t main() {
+    _
+    int te;
+    cin >>te;
+    for(int t = 1; t <= te; t++){
+        int n;
+        cin >> n;
+        string s, str;
+        vector<string>v;
+        int mx = 0;
+        for(int i = 0 ;i < n; i++){
+            cin >> s;
+            v.pb(s);
+        }
+        string pre = "";
+        vector<string> pref;
+        vector<string> suff;
+        vector<pair<int,int>>v1(n);
+        int k = 0;
+        for(string p :v){
+            int len = p.length();
+            string pre = "";
+            for(int i = 0; i < len; i++){
+                if(p[i] == '*'){
+                    v1[k].fi = i;
+                    break;
+                }else{
+                    pre += p[i];
+                }
+            }
+            k++;
+            pref.pb(pre);
+        }
+        k =0 ;
+        for(auto p :v){
+            int len = p.length();
+            string pre = "";
+            for(int i = len - 1; i >= 0; i--){
+                if(p[i] == '*'){
+                    v1[k].se = i;
+                    break;
+                }else{
+                    pre += p[i];
+                }
+            }
+            k++;
+            suff.pb(pre);
+        }
+        sort(all(pref));
+        sort(all(suff));
+        string ans ="";
+        if(check(pref)  and check(suff)){
+            ans = pref[n-1];
+            for(int i = 0; i <v1.size();i++){
+                if(v1[i].fi !=-1 and v1[i].se!=-1){
+                    for(int j = v1[i].fi + 1;  j < v1[i].se; j++){
+                        if(v[i][j]!='*'){
+                            ans+=v[i][j];
+                        }
+                    }
+                }
+            }
+            string h = suff.back();
+            reverse(all(h));
+            ans+=h;
+        }else{
+            ans ="*";
+        }
+        cout << "Case #" << te <<": "<< ans << endl;
+    }
+}

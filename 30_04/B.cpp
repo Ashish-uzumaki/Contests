@@ -107,56 +107,62 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    _
+    int n, q;
+    cin >> n >> q;
+    vector<int>R(n);
+    for(int i = 0; i < n; i++){
+        cin >> R[i];
+    }
+    vector<int>C(n);
+    for(int i = 0; i < n; i++){
+        cin >> C[i];
+    }
+    vector<int>par1(n+1, 0),par2(n+1, 0);
+    for(int i = 0;i < n; i++){
+        if(R[i] % 2 == 1){
+            par1[i+1] = 1;
+        }
+        if(C[i] % 2 == 1){
+            par2[i+1] = 1;
+        }
+    }
+    for(int i = 1; i <= n; i++){
+        par1[i] += par1[i-1];
+        par2[i] += par2[i-1];
+    }
+    int a, b, c, d;
+    for(int j = 0 ; j < q;j++){
+        cin >> a >> b >> c >> d;
+        int len1 = max(a,c) - min(a,c) + 1;
+        int len2 = max(b,d) - min(b,d) + 1;
+        int diff1 = par1[max(a,c)] - par1[min(a,c) - 1];
+        int diff2 = par2[max(b,d)] - par2[min(b,d) - 1];
+        // tr(diff1,diff2,len1,len2);
+        if(diff1 == len1){
+            if(diff2 == len2){
+                cout << "YES" << endl;
+            }else{
+                cout << "NO"<<endl;    
+            }
+        }else if( diff1 == 0){
+            if(diff2 == 0){
+                cout << "YES" << endl;
+            }else{
+                cout << "NO"<<endl;    
+            }
+        }else{
+            cout << "NO"<<endl;
+        }
+    }
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
 
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
 
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+}

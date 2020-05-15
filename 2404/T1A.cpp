@@ -107,56 +107,98 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    _
+    int n, k;
+    cin >> n >> k;
+    string s;
+    cin >> s;
+    vector<int>v(n),v1;
+    for(int i = 0; i < n; i++){
+        v[i] = s[i] - '0';
+    }
+    v1 = v;
+    map<int,set<pair<int,int>>>mt;
+    for(int i = 0; i <= 9 ;i++){
+        for(int j = 0; j < n; j++){
+            mt[i].insert(mp(abs(v[j] - i),j));
+        }
+    }
+    int mini = 1e8;
+    int idx = -1;
+    map<int,int>m;
+    for(int i=0;i<=9;i++){
+        m[i] = 1e18;
+    }
+    for(int i = 0; i <= 9;i++){
+        int ans = 0;
+        int cnt = 0 ;
+        for(auto j : mt[i]){
+            ans += j.fi;
+            cnt++;
+            if(cnt == k){
+                break;
+            }
+        }
+        if(ans <= mini){
+            mini = ans;
+            idx = i;
+            m[idx] = mini;
+        }
+    }
+    // tr(m);
+    // tr(idx);
+    set<string>ans;
+    for(int r =0 ;r<= 9;r++){
+        if(m[r] == mini){
+            vector<int>v1 = v;
+            int cnt = 0;
+            int last = -1;
+            int idx = r;
+        for(auto p:mt[idx]){
+                cnt++;
+                last = p.fi;
+                if(cnt == k) break;
+            }
+            int cnt_idx = 0;
+            vector<int>v2;
+            for(auto p: mt[idx]){
+                if(p.fi < last){
+                    v1[p.se] = idx;
+                    cnt_idx++;
+                }
+                if(p.fi == last){
+                    v2.pb(p.se);
+                } 
+            }
+            int lef = k - cnt_idx, j= 0;
+            for(j = 0 ;j < v2.size(); j++){
+                if( lef > 0){
+                    if(v2.size() - j > lef){
+                        if(v1[v2[j]] > idx){
+                            v1[v2[j]] = idx;
+                            lef--;
+                        }
+                    }else{
+                        v1[v2[j]] = idx;
+                        lef--;
+                    }
+                }
+            }
+            string s1= "";
+            for(int i= 0; i<v1.size();i++){
+                char c = v1[i] + '0';
+                s1+=c;
+            }
+            ans.insert(s1);
+        }
+    }
+    cout<< mini << endl;
+    cout << *ans.begin();
+}

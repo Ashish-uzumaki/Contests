@@ -6,7 +6,7 @@ typedef long long ll;
 typedef long double lld;
 typedef long long int lli;
 using namespace std;
-const int N = 1000001;
+const int N = 8001;
 const int MOD=1e9+7;
 const bool DEBUG = 1;
 #define sd(x) scanf("%d", &x)
@@ -33,7 +33,7 @@ const bool DEBUG = 1;
 #define all(c) c.begin(), c.end()
 #define inf 1000000000000000001
 #define epsilon 1e-6
-#define int ll
+// #define int ll
 #define RUN_T			 \
     int _t; 			 \
     cin >> _t;			 \
@@ -107,56 +107,39 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    RUN_T{
+        int n;
+        cin >> n;
+        vector<int>freq(N+1, 0),mt(N+1,0);
+        vector<int>v(n);
+        for(int i = 0; i < n; i++){
+            cin >> v[i];
+            freq[v[i]]++;
+        }
+        // tr(freq);
+        for(int i  = 0; i < n; i++){
+            int sum = v[i];
+            for(int j = i + 1; j <  n ;j++) {
+                sum += v[j];
+                if(sum <= N and freq[sum] >= 1){
+                    // tr(sum);
+                    mt[sum] = 1;
+                }
+            }
+        }
+        int ans = 0;
+        for(int i =1; i <= N; i++){
+            if(mt[i] >= 1){
+                ans += freq[i];
+            }
+        }
+        cout << ans << endl;
+    }
+}

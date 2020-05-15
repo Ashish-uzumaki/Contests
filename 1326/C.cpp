@@ -107,47 +107,76 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int n, ans = 0;
-void recur(int i, vector<bool>&v, string& s, vector<int>&p){
-    if(i == s.length()){
-        ans += 1;
-        ans %= MOD;
-        return;
+int n , m;
+int possible(vector<int>& nums, int m, int mx) {
+    int n = nums.size();
+    int ans = 0;
+    vector<int> v1;
+    int cnt = 0;
+    for(int i = 0; i < n; i++) {
+        ans = max(nums[i], ans);
+        cnt++;
+        if(cnt >= mx and m > 1){
+            v1.pb(ans);
+            ans = nums[i];
+            cnt = 1;
+            m -= 1;
+        }   
     }
-    for(int j = 1; j <= n; j++){
-        if(v[j]) continue;
-        if(s[i] == '<'){
-            if( j > p.back()){
-                v[j] = true;
-                p.pb(j);
-                recur(i + 1, v, s, p);
-                p.pop_back();
-                v[j] = false;
-            }
-        }else{
-            if(j < p.back()){
-                v[j] = true;
-                p.pb(j);
-                recur(i + 1, v, s, p);
-                p.pop_back();
-                v[j] = false;
-            }
+    if(cnt>=mx){
+        m-=1;
+        v1.pb(ans);
+    }
+    if(m > 0 ){
+        tr(v1);
+        return -1;
+    }else{
+        int val = 0;
+        for(int i = 0 ;i < v1.size();i++){
+            val += v1[i];
+            val %= MOD;
         }
+        return val;
+    }      
+}
+map<int,int>mt;
+int splitArray(vector<int>& nums, int m) {
+    int r = n;
+    int l = 0;
+    
+    int ans = 0;
+    
+    while(l<=r) {
+        int mx = (l+r)/2;
+        if(mx == 1){
+            tr("yo");
+        }
+        int ret = possible(nums, m, mx);
+        if(ret!=-1) {
+            ans = max(ret,ans);
+            mt[ans]+=1;
+            r = mx-1;
+        }
+        else l = mx+1;
     }
-
+    
+    return ans;
+    
 }
 int32_t main() {
-    cin >> n;
-    string s;
-    cin >> s;
-    vector<bool>v(n+1,false);
-    vector<int>p;
-    for(int i = 1; i <= n; i++){
-        p.pb(i);
-        v[i] = true;
-        recur(0, v, s, p);
-        v[i] = false;
-        p.pop_back();
-    }
-    tr(ans);
+        cin>> n >>m;
+        vector<int>v;
+        int maxi = 0;
+        for(int i = 0; i < n; i++){
+            int x;
+            cin>>x;
+            v.pb(x);
+            maxi = maxi+x;
+        }
+        // if( n == m){
+        //     cout<<maxi<<" "<<1<<endl;
+        //     return 0;
+        // }
+        int ans = splitArray(v, m);
+        cout<<ans<<" "<<mt[ans]<<endl;
 }

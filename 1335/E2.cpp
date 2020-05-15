@@ -107,56 +107,51 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    _
+    RUN_T{
+        int n;
+        cin >> n;
+        vector<int>v(n);
+        int mx = 1;
+        for(int i = 0; i < n; i++){
+            cin>>v[i];
+            mx = max(mx, v[i]);
+        }
+        vector<vector<int>>v1(mx + 1,vector<int>(n + 1, 0));
+        for(int i = 1; i <= n; i++){
+            v1[v[i-1]][i] = 1;  
+        }
+        for(int i = 1; i <= mx; i++){
+            for(int j = 1; j<= n; j++){
+                v1[i][j] += v1[i][j-1];
+            }
+        }
+        int ans = 1;
+        for(int i = 1; i <= mx; i++){
+            for(int j = 1; j <= n; j++){
+                if(!v1[i][j]) continue;
+                int key = v1[i][n] - v1[i][j] + 1;
+                int p = lower_bound(v1[i].begin(), v1[i].end(), key) - v1[i].begin();
+                if(v1[i][p] != key or v1[i][p] == v1[i][j] or p <= j ){
+                    break;
+                }else{
+                    if(p > j + 1){
+                        for(int k = 1; k <= mx; k++){
+                            ans = max(2 * v1[i][j] + v1[k][p-1] - v1[k][j], ans);
+                        }
+                    }else if( p == j+1){
+                        ans = max(ans, 2ll);
+                    }
+                }
+            }
+        }
+        cout << ans << endl;
+    }
+}

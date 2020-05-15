@@ -107,56 +107,76 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+vector<vector<int>>g;
+vector<int>vis,indeg,dp;
+vector<pair<int,int>>v;
+int n, m;
+void dfs(int node){
+    vis[node] = 1; 
+    for (int i : g[node]) {
+        if (!vis[i]) 
+            dfs(i);
+        dp[node] = max(dp[node], 1 + dp[i]); 
+    } 
 } 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+bool creategraph(int m){
+    g.clear();
+    g.resize(n+1);
+    indeg.clear();
+    indeg.resize(n+1, 0);
+    dp.clear();
+    dp.resize(n+1, 0);
+    vis.clear();
+    vis.resize(n+1, 0);
+    for(int i = 0 ; i < m ;i++){
+        int x = v[i].fi;
+        int y = v[i].se;
+        g[x].pb(y);
+        indeg[y]++;
+    }
+    int root = -1;
+    for(int i = 1;i <= n; i++){
+        if(indeg[i] == 0 and g[i].size() != 0){
+            root = i;
+            break;
+        }
+    }
+    if(root  == -1){
+        return false;
+    }
+    dfs(root);
+    for(int i = 1; i <= n; i++){
+        if(dp[i] + 1 == n) return true;
+    }
+    return false;
+}
+int32_t main() {
+    int x, y;
+    cin >> n >> m;
+    g.resize(n + 1);
+    vis.resize(n+1 , 0);
+    indeg.resize(n + 1, 0);
+    dp.resize(n + 1, 0);
+    for(int i  = 0 ; i < m; i++){
+        cin >> x >> y;
+        v.pb(mp(x,y));
+    }
+    int l = 0, r = m;
+    int val = -1;
+    while(l <= r){
+        int mid = l + ( r - l) / 2;
+        if(creategraph(mid)){
+            val = mid;
+            r = mid - 1;
+        }else{
+            l = mid + 1;
+        }
+    }
+    cout << val;
+}

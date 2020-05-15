@@ -23,25 +23,25 @@ const bool DEBUG = 1;
 #define LET(x, a) __typeof(a) x(a)
 #define foreach(it, v) for (LET(it, v.begin()); it != v.end(); it++)
 #define MEMS(a, b) memset(a, b, sizeof(a))
-#define _			\
-    ios_base::sync_with_stdio(false);			\
-    cin.tie(NULL);			\
+#define _            \
+    ios_base::sync_with_stdio(false);            \
+    cin.tie(NULL);            \
     cout.tie(NULL);
-#define __ 			\
-    freopen("input.txt", "r", stdin);			\
+#define __             \
+    freopen("input.txt", "r", stdin);            \
     freopen("output.txt", "w", stdout);
 #define all(c) c.begin(), c.end()
 #define inf 1000000000000000001
 #define epsilon 1e-6
 #define int ll
-#define RUN_T			 \
-    int _t; 			 \
-    cin >> _t;			 \
-    while (_t--)			 
-#define tr(...)				\
-if (DEBUG) {				\
-cout << __FUNCTION__ << ' ' << __LINE__ << " = ";				\
-trace(#__VA_ARGS__, __VA_ARGS__);				\
+#define RUN_T             \
+    int _t;              \
+    cin >> _t;             \
+    while (_t--)             
+#define tr(...)                \
+if (DEBUG) {                \
+cout << __FUNCTION__ << ' ' << __LINE__ << " = ";                \
+trace(#__VA_ARGS__, __VA_ARGS__);                \
 }
 template <typename S, typename T>
 ostream &operator<<(ostream &out, pair<S, T> const &p) {
@@ -107,56 +107,55 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+bool kFactors(int n, int k){  
+    int cnt = 0;  
+    while (n%2 == 0) 
+    { 
+        cnt++; 
+        n /= 2; 
+    } 
+    for (int i=3; i*i<=n; i=i+2) 
+    { 
+        while (n%i == 0) 
+        { 
+            n = n/i; 
+            cnt++; 
+        } 
+    } 
+    if (n > 2) 
+        cnt++;  
+    return cnt >= k; 
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
 } 
+int32_t main() {
+    _
+    int n;
+    cin >> n;
+    int ans = 0;
+    for(int i = 0; i< n;i++){
+        string s;
+        cin >> s;
+        int odd = 0, even =0;
+        for(int j =0 ;j <s.length();j++){
+            int p = s[i]- '0';
+            if(p%2==1){
+                odd++;
+            }else{
+                even++;
+            }
+        }
+        tr(even ,odd, s.length());
+        if(even != s.length() and odd !=s.length()){
+            ans++;
+        }
+    }
+    cout << ans << endl;
 
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+
+}

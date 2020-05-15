@@ -107,56 +107,73 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+int fac[N + 10], ifac[N + 10];
+ 
+int power(int x, int t){
+    int ans = 1;
+    while(t > 0) {
+        if(t & 1) ans = 1LL * ans * x % MOD;
+        x = 1LL * x * x % MOD;
+        t >>= 1;
+    }
+    return ans;
+}
+ 
+void init_fac(){
+    fac[0] = 1;
+    for(int i = 1; i < N; i++){
+        fac[i] = (fac[i - 1] * i) % MOD;
+    }
+    ifac[N - 1] = power(fac[N - 1], MOD - 2);
+    for(int i = N - 1; i >= 1; i--){
+        ifac[i - 1] = (ifac[i] * i) % MOD;
+    }
+}
+ 
+int C(int n, int m)
+{
+	if(n < m) return 0;
+	return fac[n] * (1LL * ifac[m] * ifac[n - m] % MOD) % MOD;
+}
+int soln (int o, int m) {
+        int ans = 0;
+ 
+        if (o == 1) {
+            return 1;
+        }
+ 
+        if (m == 0) {
+            return 1;
+        }
+ 
+        if (m == 1) {
+            return o;
+        }
+ 
+        for(int i = 1; i <= m; ++i) {
+            int temp = (C(o, i) * C(m-1, i-1)) % MOD;
+            ans = (ans + temp) % MOD;
+        }
+ 
+        return ans;
+    }
+int32_t main() {
+    _
+    init_fac();
+    int n , m;
+    cin >> n >> m;
+    int fin = 0;
+    for(int i = 1;i <= n; i++){
+        int ans1 = 0;
+        int ans2 = 0;
+        for(int j = 1; j <= m; j++){
+            ans1 += C(i, j) * C(m - 2 , j - 1);
+            ans2 += C(n - i + 1, j) * C(m - 1 , j-1);
+            ans1 %= MOD;
+            ans2 %= MOD; 
+        }
+        tr(ans1, ans2);
+        fin += (ans1 * ans2) % MOD;
+    }    
+    cout<< fin <<endl;
+}

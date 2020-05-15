@@ -107,56 +107,87 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    _
+    int n , m , k;
+    cin >> n >> m >>k;
+    vector<vector<int>>v(m),arr,dep;
+    int maxi = 0, mini = 1e6;
+    for(int i = 0 ; i < m; i++){
+        vector<int>temp(4);
+        cin >> temp[0] >> temp[1] >> temp[2] >> temp[3];
+        if( temp[2] == 0){
+            arr.pb(temp);
+        }else{
+            dep.pb(temp);
+        }
+    }
+    sort(all(arr));
+    sort(all(dep));
+    if(arr.size() == 0 or dep.size() == 0){
+        cout << -1 ;
+        return 0;
+    }
+    maxi = arr[arr.size() - 1][0];
+    mini = dep[0][0];
+    vector<int>mt(n + 1, 1e12);
+    set<int>st;
+    vector<int>ans(maxi + 1, 1e18);
+    int sum = 1e12*n;
+    for(int i = 0; i < arr.size(); i++){
+        vector<int>temp = arr[i];
+        int val = mt[temp[1]];
+        mt[temp[1]] = min(mt[temp[1]], temp[3]);
+        sum -= val;
+        sum += mt[temp[1]];
+        st.insert(temp[1]);
+        if(st.size() == n){
+            ans[temp[0]] = sum;
+        }
+    }
+    for(int i = 1; i <= maxi ;i++){
+        ans[i] = min(ans[i],ans[i-1]);
+    }
+    st.clear();
+    mt.clear();
+    mt.resize(n + 1, 1e12);
+    sum = n*1e12;
+    vector<int>ans2;
+    int maxi2 = dep[dep.size() - 1][0];
+    ans2.resize(maxi2 + 1, 1e18);
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+    for(int i = dep.size() - 1; i >= 0; i--){
+        vector<int>temp = dep[i];
+        int val = mt[temp[2]];
+        mt[temp[2]] = min(mt[temp[2]], temp[3]);
+        sum -= val;
+        sum += mt[temp[2]];
+        st.insert(temp[2]);
+        if(st.size() == n){
+            ans2[temp[0]] = sum;
+        }
+    }
+    for(int i = maxi2 - 1; i >=0 ;i--){
+        ans2[i] = min(ans2[i],ans2[i+1]);
+    }
+    int fin_ans = 1e18 ;
+    for(int i = 1; i <= maxi; i++){
+        if(ans[i] >= 1e18){
+            continue;
+        }
+        int key = i + k + 1;
+        if( key <= maxi2){
+            fin_ans = min(fin_ans, ans2[key] + ans[i]);
+        }
+    }
+    if(fin_ans >= 1e18){
+        fin_ans = -1;
+    }
+    cout << fin_ans << endl;
+}

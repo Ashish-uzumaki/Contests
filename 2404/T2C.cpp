@@ -107,56 +107,87 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+map<int,int> mt, inv_mt;
+int32_t main() {
+    int n, m , p;
+    cin >> n >> m >> p;
+    string s;
+    cin >> s;
+    stack<int>stk;
+    set<pair<int,int>>st;
+    vector<pair<int,int>>v;
+    for(int i = 0; i < n; i++){
+        if(s[i] == '('){
+            stk.push(i+1);
+        }else{
+            int x = stk.top();
+            stk.pop();
+            mt[x] = i + 1;
+            v.pb(mp(x , i+1));
+            st.insert(mp(x, i + 1));
+            inv_mt[i + 1] = x;
+        }
+    }
+    sort(all(v));
+    string q;
+    cin >> q;
+    int pos = p;
+    int lst_pos = (*(--st.end())).se;
+    for(int i = 0; i < m; i++){
+        if(q[i] == 'R'){
+            if(pos < lst_pos){
+                pos++;
+            }
+        }else if(q[i] == 'L'){
+            if(pos > 1){
+                pos--;
+            }
+        }else if(q[i] == 'D'){
+            if(s[pos-1]== ')'){
+                auto x = mp(inv_mt[pos], pos);
+                auto it = st.find(x);
+                set<pair<int,int>> temp = st;
+                for(auto p = it; p !=st.end(); p++){
+                    auto a = *p;
+                    if(a.fi >= x.fi and a.fi <= x.se){
+                        temp.erase(*p);
+                    }
+                }
+                st = temp;
+                tr(temp,pos);
+                if(pos == lst_pos){
+                    pos = (*(--st.end())).se;
+                }else{
+                    pos++;
+                }
+            }else{
+                auto x = mp(pos, mt[pos]);
+                pos = mt[pos];
+                auto it = st.find(x);
+                set<pair<int,int>> temp = st;
+                for(auto p = it; p !=st.end(); p++){
+                    auto a = *p;
+                    if(a.fi >= x.fi and a.fi <= x.se){
+                        temp.erase(*p);
+                    }
+                }
+                st = temp;
+                tr(temp,pos);
+                if(pos == lst_pos){
+                    pos = (*(--st.end())).se;
+                }else{
+                    pos++;
+                }
+            }
+        }
+        lst_pos = (*(--st.end())).se;
+    }
+    tr(st);
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+}

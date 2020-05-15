@@ -107,56 +107,112 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+int32_t main() {
+    int n , q, x ,y;
+    cin >> n >> q;
+    set< pair< pair<int,int>, pair<int,int> > >v;
+    set<pair<int,int>>st;
+    pair<pair<int,int>,pair<int,int>>t;
+    for(int i = 0; i< q; i++){
+        cin >> x >> y;
+        pair<int, int> p, p1,p2,p3;
+        p1 = mp(x, y);
+        if( x == 1){
+            p = mp(x+1,y-1);
+            p2 = mp(x+1,y);
+            p3 = mp(x+1,y+1);
+            if( st.find(p1) == st.end()){
+                if(st.find(p) != st.end()){
+                    t = mp(p,p1);
+                    if(p.se!=0){
+                        v.insert(t);
+                    }
+                }
+                if(st.find(p2) != st.end()){
+                    t = mp(p2,p1);
+                    v.insert(t);
+                }
+                if(st.find(p3) != st.end()){
+                    t = mp(p3,p1);
+                    if(p3.se != n+1){
+                        v.insert(t);
+                    }
+                }
+                st.insert(p1);
+                if(v.size() > 0){
+                    cout<<"No" <<endl;
+                }else{
+                    cout<<"Yes" <<endl;
+                }
+            }else{
+                st.erase(p1);
+                t = mp(p,p1);
+                v.erase(t);
+                t = mp(p1,p);
+                v.erase(t);
+                t = mp(p2,p1);
+                v.erase(t);
+                t = mp(p1,p2);
+                v.erase(t);
+                t = mp(p3,p1);
+                v.erase(t);
+                t = mp(p1,p3);
+                v.erase(t);
+                if(v.size() > 0){
+                    cout<<"No" <<endl;
+                }else{
+                    cout<<"Yes" <<endl;
+                }
+            }
+        }else{
+            p = mp(x-1,y-1);
+            p2 = mp(x-1,y);
+            p3 = mp(x-1,y+1);
+            if( st.find(p1) == st.end()){
+                if(st.find(p) != st.end()){
+                    t = mp(p,p1);
+                    if(p.se != 0){
+                        v.insert(t);
+                    }
+                }
+                if(st.find(p2) != st.end()){
+                    t = mp(p2,p1);
+                    v.insert(t);
+                }
+                if(st.find(p3) != st.end()){
+                    t = mp(p3,p1);
+                    if(p3.se != n+1){
+                        v.insert(t);
+                    }
+                }
+                if(v.size() > 0){
+                    cout<<"No" <<endl;
+                }else{
+                    cout<<"Yes" <<endl;
+                }
+                st.insert(p1);
+            }else{
+                st.erase(p1);
+                t = mp(p,p1);
+                v.erase(t);
+                t = mp(p1,p);
+                v.erase(t);
+                t = mp(p2,p1);
+                v.erase(t);
+                t = mp(p1,p2);
+                v.erase(t);
+                t = mp(p3,p1);
+                v.erase(t);
+                t = mp(p1,p3);
+                v.erase(t);
+                if(v.size() > 0){
+                    cout<<"No" <<endl;
+                }else{
+                    cout<<"Yes" <<endl;
+                }
+            }
+        }
+        // tr(v);
+        
+    }
+}

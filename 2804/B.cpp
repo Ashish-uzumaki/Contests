@@ -107,56 +107,52 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+double dist(int x1, int y1 , int x2, int y2){
+    int d = abs(x1 - x2)*abs(x1 - x2) + abs(y1 - y2)*abs(y1 - y2);
+    double ans  = sqrt(d);
+    return ans;
+}
+double sqr(int val){
+    return val*val;
+}
+int32_t main() {
+    _
+    pair<int, int> A,B,T;
+    cin >> A.fi >> A.se >> B.fi >> B.se >> T.fi >> T.se;
+    int n;
+    cin>>n;
+    double res=0;
+    vector<pair<double,int>> va,vb;
+    for(int i = 0; i < n; i++){
+        int x,y;
+        cin >> x >> y;
+        double t = sqrt(sqr(x-T.fi)+sqr(y-T.se));
+        res += t*2;
+        va.pb(mp(sqrt(sqr(x-A.fi)+sqr(y-A.se))-t,i));
+        vb.pb(mp(sqrt(sqr(x-B.fi)+sqr(y-B.se))-t,i));
+    }
+    
+    sort(all(va));
+    va.resize(min(n,2ll));
+    
+    sort(all(vb));
+    vb.resize(min(n,2ll));
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+    double ad = min(va[0].fi, vb[0].fi);
+    
+    if(n >= 2){
+        if(va[0].se == vb[0].se)
+            ad=min(ad, min(va[0].fi + vb[1].fi, va[1].fi + vb[0].fi));
+        else
+            ad=min(ad, va[0].fi + vb[0].fi);
+    }
+    cout << setprecision(20) << res + ad;
+    
+    return 0;
+}

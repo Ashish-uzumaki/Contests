@@ -107,56 +107,68 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+int32_t main() {
+    _
+    int n ,m , k;
+    cin >> n >> m >> k;
+    vector<int> a(n+1), b(m+1);
+    for(int i = 0; i < n; i++){
+        cin >> a[i];
+    }
+    for(int i = 0; i < m; i++){
+        cin >> b[i];
+    }
+    map<int,int> m1, m2;
+    int prev = 0;
+    int cnt = 0;
+    for(int i = 0;i < n; i++){
+        if(a[i] == 1){
+            if(prev == 1){
+            cnt++;
+            }else{
+                cnt = 1;
+            }
+        }else{
+            m1[cnt]++;
+            cnt = 0;
+        }
+        prev = a[i];
+    }
+    m1[cnt]++;
+    prev = 0;
+    cnt = 0;
+    for(int i = 0;i < m; i++){
+        if(b[i] == 1){
+            if(prev == 1){
+            cnt++;
+            }else{
+                cnt = 1;
+            }
+        }else{
+            m2[cnt]++;
+            cnt = 0;
+        }
+        prev = b[i];
+    }
+    m2[cnt]++;
+    map<int,int>m3,m4;
+    for(auto i: m1){
+        for(int j = 0;j < i.fi; j++){
+            m3[j+1] +=(i.fi - j)*(m1[i.fi]);
+        }
+    }
+    for(auto i: m2){
+        for(int j = 0;j < i.fi; j++){
+            m4[j+1] +=(i.fi - j)*(m2[i.fi]);
+        }
+    }    
+    // tr(m3);
+    // tr(m4);
+    int ans = 0;
+    for(int i = 1; i <= max(n,m); i++){
+        if(k % i == 0){
+            ans += (m3[i]*m4[k/i]);
+        }
+    }
+    cout<<ans<<endl;
+}

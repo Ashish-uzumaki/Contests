@@ -107,56 +107,50 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+vector<vector<int>> v;
+vector<vector<int>> dp;
+int recur(int i, int pro, int n, int k){
+    if( i == n + 1) return 0;
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+    int ans = dp[i][pro];
+    
+    if(ans != -1) return ans;
+    
+    ans = 0;
+    
+    int curr = 0;
+    
+    for (int j = 0; j <= k; j++) {
+        if ((pro - j) >= 0) {
+            if (j > 0) {
+                curr += v[i][j - 1];
+            }
+            ans = max(ans, curr + recur(i + 1, pro - j, n, k));
+        }
+    }
+    return ans;
+}
+void resize_every(int n, int k){
+    v.clear();
+        v.resize(n+1);
+        dp.clear();
+    dp = vector<vector<int>> (n + 1, vector<int> (k + 1, -1));
+}
+int32_t main() {
+    _
+    int T;
+    cin >> T;
+    for(int t = 1; t <= T; t++){
+        int n , m , k, x;
+        cin >> n >> m >> k;
+        resize_every(n, k);
+        for(int i = 1; i <= n; i++){
+            for(int j = 0; j < m; j++){
+                cin >> x;
+                v[i].pb(x);
+            }   
+        }
+        int val = recur(1, k, n ,m);
+        cout<<"Case #"<< t <<": "<< val <<endl;
+    }
+}

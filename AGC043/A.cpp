@@ -107,56 +107,53 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+bool check(int ans,int k,vector<int>&v,int n){
+    for(int i = 1; i < n ;i++){
+        if(v[i] - v[i-1] > ans){
+            int va = v[i] - v[i-1] -1;
+            va = va /ans;
+            k-=va;
+            if(k < 0){
+                return false;
+            } 
+        }
+    }
+    return true;
+}
+int32_t main() {
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+    _
+    int T;
+    cin >> T;
+    for(int t = 1 ; t <= T ;t++){
+        int n,k ;
+         cin >> n>>k;
+         vector<string>v;
+         for(int i = 0; i < n; i++){
+             string x;
+             cin>>x;
+             v.pb(x);
+         }
+         int fin = 0;
+         for(int  i = 0  ; i <  n; i += k){
+             int ans = 0;
+             for(int len = 1; len <= v[i].length();len++){
+                string key = v[i].substr(0,len);
+                int cnt = 0;
+                for(int j = i ;j < i + k ; j++){
+                    string p = v[j].substr(0,len);
+                    if(key == p){
+                        cnt++;
+                    }
+                }
+                if(cnt == k){
+                    ans = len;
+                }else{
+                    break;
+                }
+             }
+             fin += ans;
+         }
+        cout<<"Case #"<<t<<": "<< fin <<endl;
+    }
+}

@@ -107,56 +107,56 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
+bool power_check(int w, int m,vector<int>&v){ 
+    int cnt = 0;
+    while (m) { 
+        if ((m - 1) % w == 0){
+            m = (m - 1) / w; 
+            v.pb(cnt);
+        }  
+        else if (m % w == 0){
+            m = m / w; 
+        }  
+        else
+            break; 
+        cnt++;
+    }  
+    return (m == 0); 
 } 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+int32_t main() {
+    RUN_T{
+        int n , m;
+        cin >> n >> m;
+        vector<int>v;
+        for(int i = 0; i < n; i++){
+            int x;
+            cin>>x;
+            v.pb(x);
+        }
+        map<int,int>mt;
+        int flag = 0;
+        for(int i = 0; i < n; i++){
+            vector<int>v1;
+            if(power_check(m,v[i],v1) or v[i] == 0){
+                for(int j = 0 ;j < v1.size(); j++){
+                    mt[v1[j]] += 1;
+                    if(mt[v1[j]] > 1){
+                        flag = 1;
+                        break;
+                    }
+                }
+                if(flag){
+                    break;
+                }
+            }else{
+                flag = 1;
+                break;
+            }
+        }
+        if(!flag){
+            cout<<"YES"<<endl;
+        }else{
+            cout<<"NO"<<endl;
+        }
+    }
+}

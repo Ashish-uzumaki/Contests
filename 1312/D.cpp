@@ -7,7 +7,7 @@ typedef long double lld;
 typedef long long int lli;
 using namespace std;
 const int N = 1000001;
-const int MOD=1e9+7;
+const int MOD=998244353;
 const bool DEBUG = 1;
 #define sd(x) scanf("%d", &x)
 #define sd2(x, y) scanf("%d%d", &x, &y)
@@ -107,56 +107,48 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
+int fac[N+1]; 
+int power(int x, int y) { 
+    int res = 1;
+    x = x % MOD; 
+    while (y > 0) { 
+        if (y & 1) 
+            res = (res*x) % MOD; 
+        y = y>>1; // y = y/2 
+        x = (x*x) % MOD; 
+    } 
+    return res; 
 } 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
+int modInverse(int n) { 
+    return power(n, MOD-2); 
 } 
+void fact(){
+    fac[0] = 1; 
+    for (int i=1 ; i<N; i++) 
+        fac[i] = fac[i-1]*i % MOD;
+} 
+int nCr(int n, int r) { 
+   if (r==0) 
+      return 1;  
+    return (fac[n]* modInverse(fac[r]) % MOD * 
+            modInverse(fac[n-r]) % MOD) % MOD; 
+}
+int32_t main() {
+    _
+    int n , m;
+    fact();
+    cin >> n >> m;
+    int ans1 = nCr(m , n-1);
+    int ans = 0;
+    if( n <= 2){
+        cout << 0;
+        return 0;
+    }
+    for(int i = 1; i < n - 1 ; i++){
+        int z = (nCr(n - 3, i - 1)*(n - 2))%MOD;
+        ans = (ans + z) % MOD;
+        ans %= MOD;
+    }
+    ans = (ans * ans1)%MOD;
+    cout<< ans << endl;
+}

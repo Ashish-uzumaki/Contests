@@ -106,57 +106,108 @@ int gcd(int a, int b) {
      if (b == 0)
         return a;
     return gcd(b, a % b);
-}
-int findMin(int arr[], int n) 
+} 
+#define ALPHABET_SIZE (26) 
+#define CHAR_TO_INDEX(c) ((int)c - (int)'a') 
+struct TrieNode 
 { 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
+    struct TrieNode *children[ALPHABET_SIZE];  
+    bool isLeaf; 
+    int val;
+};  
+struct TrieNode *getNode(void){ 
+    struct TrieNode *pNode = new TrieNode; 
   
+    if (pNode){ 
+        int i; 
+  
+        pNode->isLeaf = false; 
+        pNode->val = 0;
+        for (i = 0; i < ALPHABET_SIZE; i++) 
+            pNode->children[i] = NULL; 
+    } 
 
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
+    return pNode; 
+}  
+void insert(struct TrieNode *root, string key) 
 { 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
+    int length = key.length(); 
+    int index; 
+  
+    struct TrieNode *pCrawl = root; 
+  
+    for (int level = 0; level < length; level++){ 
+        index = CHAR_TO_INDEX(key[level]); 
+        if (!pCrawl->children[index]){
+            pCrawl->children[index] = getNode();
+        } 
+        pCrawl->val+=1;
+        pCrawl = pCrawl->children[index]; 
+    }  
+    pCrawl->isLeaf = true; 
+}  
+int countChildren(struct TrieNode *node, int *index){ 
+    int count = 0; 
+    for (int i=0; i<ALPHABET_SIZE; i++){ 
+        if (node->children[i] != NULL){ 
+            count++; 
+            *index = i; 
+        } 
+    } 
+    return (count); 
 } 
+int dfs(struct TrieNode *root,struct TrieNode *par){
+}
+string walkTrie(struct TrieNode *root) 
+{ 
+    struct TrieNode *pCrawl = root; 
+    int index; 
+    string prefix; 
+  
+    while (countChildren(pCrawl, &index) == 1 && 
+            pCrawl->isLeaf == false) 
+    { 
+        pCrawl = pCrawl->children[index]; 
+        prefix.push_back('a'+index); 
+    } 
+    return (prefix); 
+} 
+void constructTrie(string arr[], int n, struct TrieNode *root) 
+{ 
+    for (int i = 0; i < n; i++) 
+        insert (root, arr[i]); 
+    return; 
+} 
+string commonPrefix(string arr[], int n) 
+{ 
+    struct TrieNode *root = getNode(); 
+    constructTrie(arr, n, root);  
+    return walkTrie(root); 
+} 
+int main() 
+{ 
+    string arr[] = {"geeksforgeeks", "geeks", 
+                    "geek", "geezer"}; 
+    int n = sizeof (arr) / sizeof (arr[0]);
+    string ans = commonPrefix(arr, n); 
+} 
+int32_t main() {
+    _
+    RUN_T{
+        int n;
+        cin >> n;
+        vector<string>v;
+        vector<int>v;
+        for(int i = 0; i < n; i++){
+            string x;
+            cin>>x;
+            v.pb(x);
+        }
+        sort(all(v));
+        for(int i = 0; i < n; i+=k ){
+            
+        }
+
+    }
+    
+}

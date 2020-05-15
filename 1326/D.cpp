@@ -107,56 +107,110 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
+int longestPrefixSuffix(string s) 
 { 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
+    int n = s.length(); 
   
+    int lps[n]; 
+    lps[0] = 0;
+    int len = 0; 
+    int i = 1; 
+    while (i < n) 
+    { 
+        if (s[i] == s[len]) 
+        { 
+            len++; 
+            lps[i] = len; 
+            i++; 
+        } 
+        else {  
+            if (len != 0) 
+            { 
+                len = lps[len-1];  
+            } 
+            else // if (len == 0) 
+            { 
+                lps[i] = 0; 
+                i++; 
+            } 
+        } 
+    } 
+  
+    int res = lps[n-1];  
+    return (res > n/2)? n/2 : res; 
+}
+string compute(string s){
+    string s1 = s;
+    string s2 = s1;
+    
+    reverse(all(s2));
+    
+    string p ="";
+    p+=s1;
+    p+="0";
+    p+="1";
+    p+=s2;
+    int len = longestPrefixSuffix(p);
+    string pro ="";
 
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+    for(int i =0 ; i < len ;i++){
+        pro+=p[i];
+    }
+    p="";
+    p+=s2;
+    p+="0";
+    p+="1";
+    p+=s1;
+    int len1 = longestPrefixSuffix(p);
+    string pro1 ="";
+    for(int i = 0 ; i < len1 ;i++){
+        pro1+=p[i];
+    }
+    if(len > len1){
+            pro1 = pro; 
+    }
+    return pro1;
+}
+int32_t main() {
+    RUN_T{
+        string s;
+        cin >> s;
+        int n = s.length();
+        int r = n - 1;
+        string ans1 ="", ans2 ="",ans ="";
+        int idx  = -1;
+        if( n == 1){
+            cout<< s << endl;
+            continue;
+        }
+        for(int i = 0 ;i < n; i++){
+            if(s[i] == s[r] and i < r){
+                ans1 += s[i];
+                ans2 += s[r];
+                r--;
+            }else{
+                idx = i;
+                break;
+            }
+        }
+        string pro ="";
+        // tr(r);
+        if(idx >= 0){
+            string s1 = s.substr(idx,r-idx+1);
+            // tr(s1);
+            pro = compute(s1);
+        }
+        // tr(pro,ans1,ans2);
+        if(ans1!=""){
+            ans+=ans1;
+            ans+=pro;
+            reverse(all(ans2));
+            ans+=ans2;
+        }
+        string pro1 = compute(s);
+        if(pro1.length()> ans.length()){
+            ans = pro1;
+        }
+        cout<<ans<<endl;
+    }
+}

@@ -107,56 +107,64 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+     }
+}
+vector<int>v1;
+vector<int> recur(int value, int idx , vector<int>&ans){
+   if(value == 0){
+       return ans;
+    }
+    if(idx == v1.size()){
+        vector<int>lol;
+        return lol;
+    }
+    for(int j = 0; j< 2; j++){
+        if( j == 0){
+            ans.pb(-1 * pow(2,v1[idx]));
+            recur(value - pow(2,v1[idx]), idx + 1, ans);
+            ans.pop_back();
+        }else{
+            ans.pb(pow(2,v1[idx]));
+            recur(value + pow(2,v1[idx]), idx + 1 , ans);
+            ans.pop_back();
+        }
+    }
+}
+int32_t main() {
+    _
+    int t;
+    cin >> t;
+    for(int te = 1; te <= t; te++){
+        int x, y;
+        cin >> x >> y;
+        int x1 = abs(x);
+        int y1 = abs(y);
+        string ans = "";
+        if(x%2 == 0 and y%2 == 0){
+            ans = "IMPOSSIBLE";
+        }else if (x%2 == 1 and y%2 == 1){
+            ans = "IMPOSSIBLE";
+        }else{
+            vector<int>v2;
+            for(int i =0 ;i<10;i++){
+                // tr(x, x&(1<<i),i);
+                if((x & (1<<i))){
+                    // tr("yo");
+                    v2.pb(i);
+                }else{
+                    v1.pb(i);
+                }
+            }
+            tr(v1);
+            tr(v2);
+            vector<int> ans;
+            ans = recur(y, 0, ans);
+            tr(ans);
+        }
+        cout<< "Case #" << te << ": "<<endl;
+    }
+}

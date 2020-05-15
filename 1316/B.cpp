@@ -107,56 +107,38 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+int32_t main() {
+    _
+    RUN_T{
+        int n;
+        set<pair<string,int>>st; 
+        cin >> n;
+        string s;
+        cin >> s;
+        int len = n;
+        for(int i = 0; i < n ;i++){
+            string p1 = s.substr(i,len);
+            string p2 ="";            
+            if(i!=0){
+                p2 = s.substr(0,i);
+            }
+            if(p1.size()%2==1){
+            reverse(all(p2));
+            }
+            // tr(p1,p2,i);
+            string ans = "";
+            ans+=p1;
+            ans+=p2;
+            pair<string,int> z  =mp(ans,i+1);
+            st.insert(z);
+        }
+        auto p = *st.begin();
+        cout<<p.fi<<endl;
+        cout<<p.se<<endl;
+    }
+    
+}
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+// qwerty
+// ewqrty
+// erqw

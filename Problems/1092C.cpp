@@ -107,56 +107,62 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int32_t main() {
+    int n;
+    cin >> n;
+    vector<string>v, v1;
+    string s1 ,s2, s;
+    for(int i = 0 ; i < 2*n - 2; i++) {
+        cin >> s;
+        v.pb(s);
+        if(s.length() == n - 1){
+            v1.pb(s);
+        }
+    }
+    vector<string>v2;
+    s1 = v1[0], s2 = v1[1];
+    int len = s1.size();
+    string p1 = s1.substr(1, len - 1);
+    string p2 = s2.substr(0,len - 1);
+    // tr(s1, p1, s2 ,p2);
+    if(p1 == p2){
+        string p3 = s1[0] + p1 + s2[len - 1];
+        v2.pb(p3);
+    }
+    p1 = s2.substr(1, len - 1);
+    p2 = s1.substr(0,len - 1);
+    if(p1 == p2){
+        string p3 = s2[0] + p1 + s1[len - 1];
+        v2.pb(p3);
+    }
+    // tr(v2);
+    string ans = "";
+    for(auto p: v2){
+        string t  = "";
+        map<string, vector<char>>mt;
+        for(int i = 1; i <= n; i++){
+            mt[p.substr(0,i)].pb('P');
+            mt[p.substr(i - 1, n - i + 1)].pb('S');
+        }
+        int flag = 1;
+        for(auto x: v){
+            if(mt.count(x) == 0){
+                flag = 0;
+                break;
+            }else{
+                t += mt[x].back();
+                mt[x].pop_back();
+            }
+        }
+        if(flag){
+            ans = t;
+        }
+    }
+    cout << ans << endl;
+}

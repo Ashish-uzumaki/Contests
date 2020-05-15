@@ -107,56 +107,61 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+vector<int> calc(vector<int>v){
+    vector<int>pref,suff;
+    int n = v.size();
+    pref.pb(0);
+    suff.pb(0);
+    for(int i = 0; i < n; i++){
+        pref.pb(v[i] + pref.back());
+        suff.pb(v[n - i -1] + suff.back());
+    }
+    vector<int>len(n + 1, 0);
+    for(int i = 0; i <= n; i++){
+        for(int j = i; j >= 0; j--){
+            int l = pref[j];
+            int r = suff[ i - j];
+            len[i] = max(len[i], l + r);
+        }
+    }
+    // tr(len);
+    return len;
+}
+int32_t main() {
+    _
+    int  n ,m, x, y;
+    cin >> n >> m;
+    vector<vector<int>>v(n);
+    vector<vector<int>>dp;
+    for(int i = 0 ;i  < n; i++){
+        cin >> x;
+        for(int j = 0; j < x; j++){
+            cin >> y;
+            v[i].pb(y);
+        }
+    }
+    for(int i = 0; i < n ; i++){
+        vector<int> temp = calc(v[i]);
+        dp.pb(temp);
+        int val = temp.back();
+        while(dp[i].size() < m + 1){
+            dp[i].pb(val);
+        }
+    }
+    vector<vector<int>>ans(n,vector<int>(m + 1, 0));
+    ans[0] = dp[0];
+    for(int i = 1; i < n; i++){
+        for(int j = 1 ;j <= m; j++){
+            for(int k = 0 ; k <= j && k <= v[i].size(); k++){
+                ans[i][j] = max(ans[i][j], dp[i][k] + (j - k >= 0 ? ans[i-1][ j - k]: 0));
+            }
+        }
+    }
+    cout << ans[n-1][m] << endl;
+}

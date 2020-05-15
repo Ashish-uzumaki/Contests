@@ -107,56 +107,84 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int k = 2;
+vector<vector<int>>g;
+vector<int>vis,dist,par;
+int last, len; 
+bool done;
+void dfs(int v ,int p, int depth){
+    if(done) return;
+    vis[v] = 1;
+    dist[v] = depth;
+    par[v] = p;
+    for(auto u : g[v]){
+        if(done) return;
+        if(vis[u]){
+            if(depth - dist[u] >= k){
+                done = true;
+                len = depth - dist[u];
+                last = v;
+                return;
+            }
+        }else{
+            dfs(u, v, depth + 1);
+        }
+    }
+}
+void bfs(int x){
+    queue<int>q;
+    q.push(x);
+    vis[x] = 1;
+    dist[x] = 0;
+    while(!q.empty()){
+        int v = q.front();
+        q.pop();
+        for(auto u : g[v]){
+            if(!vis[u]){
+                vis[u] = 1;
+                dist[u] = dist[v] + 1;
+                q.push(u);
+            }
+        }
+    }
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+}
+int32_t main() {
+    int n, m, x, y;
+    cin >> n;
+    g.resize(n);
+    vis.resize(n, 0);
+    dist.resize(n, 0);
+    par.resize(n, 0);
+    for(int i = 0; i < n; i++){
+        cin >> x >> y;
+        x--;
+        y--;
+        g[x].pb(y);
+        g[y].pb(x);
+    }
+    dfs(0, -1, 0);
+    vis.clear();
+    vis.resize(n, 0);
+    vector<int>v1;
+    for(int i = 0; i < len + 1; i++){
+        vis[last] = 1;
+        v1.pb(last);
+        last = par[last];
+    }
+    dist.clear();
+    dist.resize(n, 0);
+    for(int i: v1){
+        dist[i] = 0;
+        bfs(i);
+    }
+    for(int i = 0; i < n; i++){
+        cout << dist[i]<< " ";
+    }
+}

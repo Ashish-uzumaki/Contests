@@ -33,7 +33,7 @@ const bool DEBUG = 1;
 #define all(c) c.begin(), c.end()
 #define inf 1000000000000000001
 #define epsilon 1e-6
-#define int ll
+// #define int ll
 #define RUN_T			 \
     int _t; 			 \
     cin >> _t;			 \
@@ -107,56 +107,98 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+const int MAXN = (1 << 18);
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
+// template <class T>
+struct fenwick
+{
+	int sz;
+	int tr[MAXN];
 
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
+	void init(int n)
+	{
+		sz = n + 1;
+		memset(tr, 0, sizeof(tr));
+	}
 
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
+	int query(int idx)
+	{
+		int ans = 0;
+		for(; idx >= 1; idx -= (idx & -idx))
+			ans = ans+ tr[idx];
+		return ans;
+	}
 
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
+	void update(int idx, int val)
+	{
+		if(idx <= 0) return;
+		for(; idx <= sz; idx += (idx & -idx))
+			tr[idx] = tr[idx]+ val;
+	}
 
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+	// int query(int l, int r) { return query(r) - query(l - 1); }
+};
+int main() {
+    RUN_T{
+        int n;
+        cin >> n;
+        vector<int>v(n);
+        for(int i = 0; i < n; i++){
+            cin>>v[i];
+        }
+        fenwick* sgt1 = new fenwick();
+        sgt1->init(n + 1);
+        fenwick* sgt2 = new fenwick();
+        sgt2->init(n + 1);
+        vector<int>v1(n),v2(n);
+        int len = 1;
+        vector<int>vis2(n+1,0);
+        for(int i = 0; i < n; i++){
+            if(vis2[v[i]] == 0){
+                sgt1->update(v[i], 1);
+                int ans = sgt1->query(len);
+                if( ans == len){
+                    v1[i] = 1;
+                }
+                vis2[v[i]] = 1;
+            }else{
+                break;
+            }
+            len++;
+        }
+        // tr(v1);
+        reverse(all(v));
+        len = 1;
+        vector<int>vis(n+1,0);
+        for(int i = 0; i < n; i++){
+            if(!vis[v[i]]){
+                sgt2->update(v[i], 1);
+                int ans = sgt2->query(len);
+                if( ans == len){
+                    v2[n - i - 1] = 1;
+                }
+                vis[v[i]] = 1;
+            }else{
+                break;
+            }
+            len++;
+        }
+        // tr(v2);
+        vector<pair<int,int>>v3;
+        for(int i = 0; i < n -1; i++){
+            if(v1[i] == 1 and v2[i+1] == 1){
+                v3.pb(mp(i + 1, n - i - 1));
+            }
+        }
+        cout<< v3.size()<<endl;
+        for(auto i: v3){
+            cout<<i.fi <<" "<<i.se <<endl;
+        }
+    }
+}

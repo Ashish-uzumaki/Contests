@@ -107,56 +107,107 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+int dx[] ={-1,0,1,0};
+int dy[] ={0,1,0,-1};
+int visit[1001][1001];
+char v[1001][1001];
+int n;
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
+bool inside(int x,int y){
+    if(x<0 or y<0 or x>=n or y>=n){
+        return false;
+    }
+    return true;
+}
 
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void dfs(int x,int y){
+    if(visit[x][y])
+        return;
+    visit[x][y]=1;
+    for(int i = 0; i < 4;i++){
+        if(inside(x+dx[i],y+dy[i])){
+            if(visit[x+dx[i]][y+dy[i]] == 0 and v[x+dx[i]][y+dy[i]]!='X'){
+                char c;
+                if(i == 0){
+                    c = 'D';
+                }else if(i == 1){
+                    c = 'L';
+                }else if(i == 2){
+                    c = 'U';
+                }else if(i== 3){
+                    c = 'R';
+                }
+                // tr(x+dx[i],y+dy[i],c);
+                v[x+dx[i]][y+dy[i]] = c;
+                dfs(x+dx[i],y+dy[i]);
+            }
+        }
+    }
+}
+int32_t main() {
+    _
+    int x,y;
+    cin >> n;
+    vector<pair<int,int>>pos;
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            v[i][j] = 'a';
+        }
+    }
+    for(int i = 0; i < n;i++ ){
+        for(int j = 0; j <n ;j++){
+            cin >> x >> y;
+            if(x!=-1 and y!=-1){
+                v[x-1][y-1] = 'X';
+            }else{
+                v[x-1][y-1] = 'b';
+            }
+        }
+    }
+    for(int i = 0;i < n; i++){
+        for(int j = 0 ; j < n; j++){
+            if(v[i][j] == 'X'){
+                dfs(i,j);
+            }
+            if(v[i][j] == 'b'){
+                for(int t = 0; t < 4;t++){
+                    char c;
+                    if(inside(i+dx[t],j+dy[t]) and v[i+dx[t]][j+dy[t]]=='b'){
+                        if(t == 0){
+                            c = 'D';
+                        }else if(t == 1){
+                            c = 'L';
+                        }else if(t == 2){
+                            c = 'U';
+                        }else if(t== 3){
+                            c = 'R';
+                        }
+                        v[i+dx[t]][j+dy[t]]==c;
+                        break;
+                    }
+                }
+                dfs(i,j);
+            }
+        }
+    }
+    int flag = 0;
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            if(v[i][j] == 'a' or v[i][j] == 'b'){
+                flag =1;
+            }       
+        }
+    }
+    if(!flag){
+        cout<<"VALID"<<endl;
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                cout<<v[i][j];       
+            }
+            cout<<endl;
+        }
+    }else{
+        cout<<"INVALID"<<endl;
+    }
+    // tr(v);
+}

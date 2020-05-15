@@ -107,56 +107,56 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+const int MAXN = (1 << 20);
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
+// template <class T>
+struct fenwick
+{
+	int sz;
+	int tr[MAXN];
 
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
+	void init(int n)
+	{
+		sz = n + 1;
+		memset(tr, 0, sizeof(tr));
+	}
 
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
+	int query(int idx)
+	{
+		int ans = 0;
+		for(; idx >= 1; idx -= (idx & -idx))
+			ans = max(ans, tr[idx]);
+		return ans;
+	}
 
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
+	void update(int idx, int val)
+	{
+		if(idx <= 0) return;
+		for(; idx <= sz; idx += (idx & -idx))
+			tr[idx] = max(tr[idx], val);
+	}
 
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+	// int query(int l, int r) { return query(r) - query(l - 1); }
+};
+int32_t main() {
+    _
+    int n;
+    cin >> n; 
+    vector<int>h(n),c(n);
+    for(int& i: h){
+        cin >> i;
+    }
+    for(int& i: c){
+        cin >> i;
+    }
+    fenwick* sgt = new fenwick();
+    sgt->init(n + 1);
+    for(int i = 1; i <= n; i++){
+        int val = sgt->query(h[i - 1] - 1);
+        // tr(val, h[i - 1], c[i - 1]);
+        val += c[i - 1];
+        sgt->update(h[i - 1], val);
+    }
+    int ans = sgt->query(n);
+    cout << ans << endl;
+}

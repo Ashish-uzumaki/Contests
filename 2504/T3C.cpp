@@ -107,56 +107,96 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+vector<set<int>>g;
+vector<int>v1;
+vector<int>vis1;
+void dfs(int x){
+    if(vis1[x] == 1) return;
+    v1.pb(x);
+    vis1[x] = 1;
+    for(auto u: g[x]){
+        if(!vis1[u]){
+            dfs(u);
+        }
+    }
+}
+int32_t main() {
+    int n, m, x, y;
+    cin >> n >> m;
+    g.resize(n);
+    vis1.resize(n, 0);
+    for(int i = 0 ;i < m; i++){
+        cin >> x >> y;
+        --x, --y;
+        g[x].insert(y);
+        g[y].insert(x);
+    }
+    dfs(0);
+    if(v1.size() != n){
+        cout << -1;
+        return 0;
+    }
+    set<int>temp1;
+    for(int i = 0 ; i < n; i++){
+        temp1.insert(i);
+    }
+    set<set<int>>st;
+    vector<int>vis(n, 0);
+    for(int i = 0 ; i < n ; i++){
+        set<int>temp;
+        if(vis[i] != 1){
+            set<int>b = temp1;
+            for(auto p : temp1){
+                int j = p;
+                if(g[i].find(j) == g[i].end()){
+                    temp.insert(j);
+                    b.erase(j);
+                    vis[j] = 1;
+                }
+            }
+            st.insert(temp);
+            temp1 = b;
+        }
+    }
+    if(st.size()!=3){
+        cout << -1 << endl;
+    }else{
+        vector<set<int>>g1;
+        g1.resize(n);
+        vector<set<int>>v;
+        for(auto p: st){
+            v.pb(p);
+        }
+        for(int i = 0; i < 3; i++){
+            set<int>p = v[i];
+            for(auto k: p){
+                for(int j = 0 ; j < 3; j++){
+                    if( i != j){
+                        for(auto r:v[j]){
+                            g1[k].insert(r);
+                        }
+                    }
+                }
+            }
+        }
+        if(g1!= g){
+            cout << -1 <<endl;
+            return 0;
+        }
+        vector<int>ans(n, 0);
+        for(int i = 0; i < v.size(); i++){
+            for(auto p: v[i]){
+                ans[p] = i + 1;
+            }
+        }
+        for(int i = 0 ; i < n ;i++){
+            cout << ans[i] << " ";
+        }
+    }
+}

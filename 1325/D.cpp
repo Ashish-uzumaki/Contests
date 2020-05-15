@@ -107,56 +107,29 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
+void compute(int S,int X) 
 { 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
+    unsigned long int A = (S - X)/2; 
   
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
+    int a = 0, b = 0, c = 0; 
+    for (int i = 0; i < 65 ; i++) 
+    { 
+        int Xi = (X & (1 << i)); 
+        int Ai = (A & (1 << i)); 
+        if (Xi == 0 && Ai == 0) { 
+            // Let us leave bits as 0. 
+        } 
+        else if (Xi == 0 && Ai > 0) { 
+            a = ((1 << i) | a);  
+            b = ((1 << i) | b);  
+        } 
+        else if (Xi > 0 && Ai == 0) { 
+            a = ((1 << i) | a); 
+        } 
+        else{       cout << "Not Possible"; 
+            return; 
+        } 
+    }
+    cout << "a = " << a << endl << "b = " << b; 
 } 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+int32_t main() {}

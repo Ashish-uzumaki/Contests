@@ -33,7 +33,7 @@ const bool DEBUG = 1;
 #define all(c) c.begin(), c.end()
 #define inf 1000000000000000001
 #define epsilon 1e-6
-#define int ll
+// #define int ll
 #define RUN_T			 \
     int _t; 			 \
     cin >> _t;			 \
@@ -107,56 +107,49 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int main() {
+    _
+    RUN_T{
+        int n;
+        cin >> n;
+        vector<int>v(n);
+        int mx = 1;
+        for(int i = 0; i < n; i++){
+            cin>>v[i];
+            mx = max(mx, v[i]);
+        }
+        vector<vector<int>>v1(mx + 1),pref(mx+1,vector<int>(n+1,0));
+        for(int i = 0; i < n; i++){
+            v1[v[i]].pb(i); 
+            pref[v[i]][i+1] = 1; 
+        }
+        for(int i = 0; i <= mx; i++){
+            for(int j = 1; j <= n; j++){
+                pref[i][j] += pref[i][j-1];
+            }
+        }
+        int ans = 0;
+        for(int i = 0; i <= mx; i++){
+            if(v1[i].size()){
+                int r = pref[i][n];
+                ans = max(ans, r);
+                for(int j = 1 ; 2 * j <= r; j++ ){
+                    int p = v1[i][j - 1];
+                    int q = v1[i][r - j];
+                    for(int y = 0; y <= mx; y++ ){
+                        if(y != i){
+                            ans = max(ans, 2*j + pref[y][q] - pref[y][p]);
+                        }
+                    }
+                }
+            }
+        }
+        cout << ans << endl;
+    }
+}

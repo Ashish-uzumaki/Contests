@@ -107,56 +107,58 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+vector<vector<pair<int,int>>> g;
+vector<int>vis;
+int dp[111][111][27][2];
+int recur(int u ,int v, int wt, int player){
+    if(dp[u][v][wt][player] >= 0) return dp[u][v][wt][player];
+    if(player == 1){
+        for(auto p: g[u]){
+            int fir = p.fi;
+            int new_wt = p.se;
+            if(new_wt < wt) continue;
+            if(recur(fir, v, new_wt, player^1) == player){
+                return (dp[u][v][wt][player] = player);
+            }  
+        }
+        return (dp[u][v][wt][player] = player^1);
+    }else{
+        for(auto p: g[v]){
+            int fir = p.fi;
+            int new_wt = p.se;
+            if(new_wt < wt) continue;
+            if(recur(u, fir, new_wt, player^1) == player){
+                return (dp[u][v][wt][player] = player);
+            }  
+        }
+        return (dp[u][v][wt][player] = player^1);
+    }
+}
+int32_t main() {
+    int n , m, x, y;
+    char c;
+    cin >> n >> m;
+    g.resize(n);
+    vis.resize(n + 1, 0);
+    for(int i = 0; i < m; i++){
+        cin >> x >> y >> c;
+        x--;
+        y--;
+        g[x].pb(mp(y, c - 'a'));
+    }
+    memset(dp,-1,sizeof(dp));
+    for(int i = 0 ; i < n; i++){
+        for(int j = 0; j < n; j++){
+            int ans = recur(i, j, 0, 1);
+            if( ans == 1) cout << 'A';
+            else cout << 'B';
+        }
+        cout << endl;
+    }
+}

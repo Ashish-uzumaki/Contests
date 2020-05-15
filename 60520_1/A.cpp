@@ -107,56 +107,137 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+const int inf = 1e9;
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+struct edge {
+    int x, y, cap, flow;
+};
+ 
+struct DinicFlow {
+    vector <edge> e;
+    vector <int> cur, d;
+    vector < vector <int> > adj;
+    int source, sink, n;
+ 
+    DinicFlow() {}
+ 
+    DinicFlow(int v, int s, int t) {
+        n = v, source = s, sink = t;
+        cur = vector <int> (n + 1);
+        d = vector <int> (n + 1);
+        adj = vector < vector <int> > (n + 1);
+    }
+ 
+    void addEdge(int from, int to, int cap) {
+        edge e1 = {from, to, cap, 0};
+        edge e2 = {to, from, 0, 0};
+        adj[from].push_back(e.size()); e.push_back(e1);
+        adj[to].push_back(e.size()); e.push_back(e2);
+    }
+ 
+    int bfs() {
+        queue <int> q;
+        for(int i = 0; i <= n; ++i) d[i] = -1;
+        q.push(source); d[source] = 0;
+        while(!q.empty() and d[sink] < 0) {
+            int x = q.front(); q.pop();
+            for(int i = 0; i < (int)adj[x].size(); ++i) {
+                int id = adj[x][i], y = e[id].y;
+                if(d[y] < 0 and e[id].flow < e[id].cap) {
+                    q.push(y); d[y] = d[x] + 1;
+                }
+            }
+        }
+        return d[sink] >= 0;
+    }
+ 
+    int dfs(int x, int flow) {
+        if(!flow) return 0;
+        if(x == sink) return flow;
+        for(;cur[x] < (int)adj[x].size(); ++cur[x]) {
+            int id = adj[x][cur[x]], y = e[id].y;
+            if(d[y] != d[x] + 1) continue;
+            int pushed = dfs(y, min(flow, e[id].cap - e[id].flow));
+            if(pushed) {
+                e[id].flow += pushed;
+                e[id ^ 1].flow -= pushed;
+                return pushed;
+            }
+        }
+        return 0;
+    }
+ 
+    int maxFlow() {
+        int flow = 0;
+        while(bfs()) {
+            for(int i = 0; i <= n; ++i) cur[i] = 0;
+            while(int pushed = dfs(source, inf)) {
+                flow += pushed;
+            }
+        }
+        return flow;
+    }
+};
+int32_t main() {
+    int n, m;
+    cin >> n >> m;
+    map<string,vector<int>> mt;
+    string s;
+    int val;
+    for(int i = 0 ;i < n ;i++){
+        cin >> s >> val;
+        mt[s].pb(val);
+    }
+    vector<int>v(m);
+    multiset<int>st;
+    for(int i = 0; i < m; i++){
+        cin >> v[i];
+        st.insert(v[i]);
+    }
+    sort(all(v));
+    string atk = "", def = "";
+    for(auto p: mt){
+        if(p.fi == "ATK") atk = "ATK";
+        else def = "DEF";
+        sort(all(mt[p.fi]));
+    }
+    //two cases only use all defence card or use none;
+    reverse(all(v));
+    //first case when use no defence card;
+    int ans = 0, maxi = 0;
+    int atk_siz = mt[atk].size();
+    for(int i = 0; i < min(m , atk_siz); i++){
+        ans += v[i] - mt[atk][i];
+        maxi = max(maxi, ans);
+    }
+    // //when use all defence cards
+    int flag = 0;
+    for(auto p: mt[def]){
+        auto idx = st.upper_bound(p);
+        if(idx == st.end()){
+            cout << maxi << endl;
+            return 0;
+        }
+        st.erase(idx);
+    }
+    vector<int>temp;
+    int temp_sum = 0;
+    for(auto p: st){
+        temp.pb(p);
+        temp_sum+=p;
+    }
+    // // tr(temp);
+    if(atk_siz == 0){
+        cout<< temp_sum << endl;
+        return 0;
+    }
+    reverse(all(temp));
+    maxi = max(maxi, maxFlow());
+    cout << maxi << endl;
+}

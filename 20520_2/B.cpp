@@ -33,7 +33,7 @@ const bool DEBUG = 1;
 #define all(c) c.begin(), c.end()
 #define inf 1000000000000000001
 #define epsilon 1e-6
-#define int ll
+// #define int ll
 #define RUN_T			 \
     int _t; 			 \
     cin >> _t;			 \
@@ -107,56 +107,105 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int n;
+const int MAXN = 1e7 + 5;
+int spf[MAXN],vis[MAXN],nex;
+vector<int>prim;
+void sieve()
+{
+    spf[1] = 1;
+    for (int i=2; i<MAXN; i++)
+        spf[i] = i;
+    for (int i=4; i<MAXN; i+=2)
+        spf[i] = 2;
+    // prim.pb(2);
+    for (int i=3; i*i<MAXN; i++)
+    {
+        if (spf[i] == i)
+        {
+            // prim.pb(i);
+            for (int j=i*i; j<MAXN; j+=i)
+                if (spf[j]==j)
+                    spf[j] = i;
+        }
+    }
+    for(int i=2;i<MAXN;i++) if(spf[i]==i) prim.pb(i);
+}
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+vector<int> getFactorization(int x)
+{
+    vector<int> ret;
+    while (x != 1)
+    {
+        ret.push_back(spf[x]);
+        x = x / spf[x];
+    }
+    return ret;
+}
+int finding_first(){
+   while(vis[prim.back()]==1){
+       prim.pop_back();
+   }
+   return prim.back();
+}
+int finding_for_this(int x){
+    int cnt = 0;
+    int val = finding_first();
+    for(int i = x; i <= x + val; i++){
+        vector<int>tem = getFactorization(i);
+        int flag = 0;
+        for(auto p : tem){
+            if(vis[p] == 1){
+                flag = 1;
+            }
+        }
+        if(flag == 0){
+            for(auto p: tem){
+                vis[p] = 1;
+            }
+            return i;
+        }
+    }
+}
+int32_t main() {
+    _
+    sieve();
+    reverse(all(prim));
+    int n;
+    cin >> n;
+    vector<int>v(n);
+    for(int i = 0; i < n; i++){
+        cin>>v[i];
+    }
+    int flag = 0;
+    for(int i = 0; i < n; i++){
+        vector<int> temp = getFactorization(v[i]);
+        if(flag == 0){
+            for(auto t: temp){
+                if(vis[t] == 1){
+                    flag = 1;
+                    v[i] = finding_for_this(v[i]);
+                    vis[v[i]] = 1;
+                    break;
+                }
+            }
+            if(flag != 1){
+                for(auto p: temp){
+                    vis[p] = 1;
+                }
+            }
+        }else{
+            v[i] = finding_first();
+            vis[v[i]] = 1;
+        }
+    }
+    for(auto p: v){
+        cout << p <<" ";
+    }
+}

@@ -107,56 +107,63 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
-
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+vector<int>v, x;
+int calc_dist(double t){
+    vector<int>temp;
+    int n = v.size();
+    for(int i = 0 ; i < n; i++){
+        temp.pb(v[i] + t * x[i]);
+    }
+    sort(all(temp));
+    reverse(all(temp));
+    int ans = 0;
+    vector<int>temp1;
+    temp1.pb(0);
+    int sum = 0 ;
+    for(int i = n - 2; i >= 0; i--){
+        int ans = temp1.back() + abs(temp[i] - temp[i + 1])*(n - 1 - i);
+        temp1.pb(ans);
+        sum += ans;
+     }
+    return sum;
+}
+bool check(int mid, int& val ){
+    int p = calc_dist(mid);
+    tr(p, mid);
+    if( p < val){
+        val = p;
+        return true;
+    }else{
+        return false;
+    }
+}
+int32_t main() {
+    _
+    int n;
+    cin >> n;
+    v.resize(n);
+    x.resize(n);
+    for(int i = 0; i < n; i++){
+        cin >> v[i];
+    }
+    for(int i = 0; i < n; i++){
+        cin >> x[i];
+    }
+    int l = 0, r = 1e6;
+    int ans = 1e8;
+    while(l <= r){
+        int mid = l + ((r - l) /2);
+        if(check(mid, ans)){
+            r = mid - 1;
+        }else{
+            l = mid + 1;
+        }
+    }
+    cout << ans << endl;
+}

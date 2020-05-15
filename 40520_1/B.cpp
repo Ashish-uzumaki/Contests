@@ -107,56 +107,71 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+const int MAXN = 1000010, LOG=20;
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
+int n, m, k, u, v, x, y, t, a, b, ans;
+int A[MAXN];
+int L1[MAXN], R1[MAXN];
+int L2[MAXN], R2[MAXN];
+stack<int> stk;
 
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
+int32_t main(){
+    _
+	cin >> n;
+	for (int i = 1; i <= n; i++){
+        cin >> A[i], A[i]++;
+    } 
+	stk.push(0);
+	for (int i = 1; i <= n; i++){
+		while (A[stk.top()] > A[i]){
+            stk.pop();
+        }
+		L1[i] = stk.top();
+		stk.push(i);
+	}
+	while (stk.size()) stk.pop();
 	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
+	A[0]=inf;
+	stk.push(0);
+	for (int i = 1; i <= n; i++){
+		while (A[stk.top()] < A[i]){
+            stk.pop();
+        } 
+		L2[i] = stk.top();
+		stk.push(i);
+	}
+	while (stk.size()) stk.pop();
+	
+	A[n+1]=0;
+	stk.push(n+1);
+	for (int i = n; i; i--){
+		while (A[stk.top()] >= A[i]) stk.pop();
+		R1[i] = stk.top();
+		stk.push(i);
+	}
+	while (stk.size()) stk.pop();
+	
+	A[n+1]=inf;
+	stk.push(n+1);
+	for (int i=n; i; i--){
+		while (A[stk.top()]<=A[i]) stk.pop();
+		R2[i]=stk.top();
+		stk.push(i);
+	}
+	while (stk.size()) stk.pop();
+	
+	for (int i=1; i<=n; i++){
+		ans+=(i-L2[i])*(R2[i]-i)*A[i];
+		ans-=(i-L1[i])*(R1[i]-i)*A[i];
+	}
+	cout<<ans<<endl;
+	
+	return 0;
+}
 
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 

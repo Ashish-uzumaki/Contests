@@ -7,7 +7,7 @@ typedef long double lld;
 typedef long long int lli;
 using namespace std;
 const int N = 1000001;
-const int MOD=1e9+7;
+const int MOD = 1e9+7;
 const bool DEBUG = 1;
 #define sd(x) scanf("%d", &x)
 #define sd2(x, y) scanf("%d%d", &x, &y)
@@ -107,56 +107,65 @@ int gcd(int a, int b) {
         return a;
     return gcd(b, a % b);
 }
-int findMin(int arr[], int n) 
-{ 
-	int sum = 0; 
-	for (int i = 0; i < n; i++) 
-		sum += arr[i]; 
+void add_self(int& a, int b) {
+     a += b;
+     if(a >= MOD) {
+           a -= MOD;
+    }
+}
+int check(int a, int b,int k){
+    int val = 1;
+    for(int i =1 ;i <= k; i++){
+        val*=10;
+    }
+    val--;
+    int cnt = val / a;
+    // tr(val,cnt);
+    int l = b, r= b + 1;
+    for(int y = 1; y <= k - 1; y++){
+        l *= 10;
+        r *= 10;
+    }
+    // tr(l,r);
+    cnt -= ((r - 1)/a - max(0ll, (l-1)/a));
+    if(b == 0)return cnt;
+    cnt++;
+    return cnt;
+}
+// int run(int x,int y){
+//     int up = 1;
+//     for(int i = 1; i <= k;i++)   up*=10;
+//     up--;
+//     int cnt = up/x;
 
-	// int dp[n+1][sum+1]; 
-    vector<vector<int>>dp(n + 1, vector<int>(sum + 1));
-    for (int i=0; i<=n; i++) 
-		for (int j=0; j<=sum; j++) 
-            dp[i][j] = 0;
-
-	for (int i = 0; i <= n; i++) 
-		dp[i][0] = true; 
-
-	for (int i = 1; i <= sum; i++) 
-		dp[0][i] = false; 
-    // dp[0][0] = true;
-	for (int i=1; i<=n; i++) 
-	{ 
-		for (int j=0; j<=sum; j++) 
-		{ 
-			if (arr[i-1] < j) 
-				dp[i][j] = (dp[i][j] || dp[i-1][j-arr[i-1]]); 
-            else if (arr[i-1] > j)
-                dp[i][j] = dp[i-1][j] || 0;
-            else dp[i][j] = 1;
-		} 
-	} 
-  
-
-	int diff = INT_MAX; 
-	
-	for (int j=sum/2; j>=0; j--) 
-	{ 
-		// Find the 
-		if (dp[n][j] == true) 
-		{ 
-			diff = sum-2*j; 
-			break; 
-		} 
-	} 
-	return diff; 
-} 
-
-int32_t main() 
-{ 
-	int arr[] = {1,5,6}; 
-	int n = sizeof(arr)/sizeof(arr[0]); 
-	cout << "The minimum difference between 2 sets is "
-		<< findMin(arr, n); 
-	return 0; 
-} 
+//     int low = y,up1 = y+1;
+//     for(int i = 1; i <= k-1; i++) low *= 10 ,up1 *= 10;
+//     cnt -= ((up1-1)/x-max(0ll,low-1)/x);
+//     if(y==0)    return cnt;
+//     return cnt+1;
+// }
+int32_t main() {
+    int n , k;
+    cin >> n >> k; 
+    int m = n / k;
+    vector<int>a(m), b(m);
+    // tr(check(3,2,3));
+    for(int i = 0; i < m; i++){
+        cin >> a[i];
+    }
+    for(int i = 0; i < m; i++){
+        cin >> b[i];
+    }
+    vector<int>ans;
+    for(int i  = 0 ; i < m; i++){
+        int y = check(a[i], b[i], k);
+        ans.pb(y);
+    }
+    int p = 1;
+    // tr(ans);
+    for(int i :ans){
+        p = (p * i ) % MOD;
+    }
+    cout << p << endl;
+    
+}
