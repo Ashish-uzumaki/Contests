@@ -113,6 +113,29 @@ void add_self(int& a, int b) {
            a -= MOD;
     }
 }
+vector<pair<int,int>>v;
+vector<vector<int>>dp;
+int n;
+int recur(int sum , int idx){
+    if(sum >= n) return 0;
+    if(idx >= n) return 1e18;
+    int &res = dp[idx][sum];//this state also store the value for the dp;
+    if(res != -1){
+        return res;
+    }
+    res = min(recur(sum + v[idx].fi, idx + 1) + v[idx].se, recur(sum , idx + 1));
+    return res;
+}
 int32_t main() {
-    
+    _
+    int x, y;
+    cin >> n;
+    v.resize(n);
+    for(int i = 0; i < n ;i++){
+        cin >> x >> y;
+        v[i] = mp(x + 1, y);
+    }
+    dp.resize(2001,vector<int>(2000,-1));
+    int ans = recur(0, 0);
+    cout << ans << endl;
 }
