@@ -1,0 +1,5 @@
+// https://onap.readthedocs.io/en/latest/submodules/sdc.git/docs/index.html 
+// https://onap.readthedocs.io/en/latest/guides/onap-user/design/index.html 
+// https://wiki.onap.org/display/DW/Commit+Messages 
+// https://jira.linuxfoundation.org/servicedesk/customer/portals 
+// https://jira.onap.org/browse/SDC-2708

@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 #include<ext/pb_ds/assoc_container.hpp>
 #include<ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
@@ -7,9 +7,9 @@ typedef long double lld;
 typedef long long int lli;
 using namespace std;
 const int N = 1000001;
-const int MOD=1e9+7;
+const int MOD = 1e9+7;
 const bool DEBUG = 1;
-#define sd(x) scanf("%d", &x)
+#define sd(x) scanf("%d ", &x)
 #define sd2(x, y) scanf("%d%d", &x, &y)
 #define sd3(x, y, z) scanf("%d%d%d", &x, &y, &z)
 #define endl "\n"
@@ -27,21 +27,21 @@ const bool DEBUG = 1;
     ios_base::sync_with_stdio(false);			\
     cin.tie(NULL);			\
     cout.tie(NULL);
-#define __ 			\
+#define __			\
     freopen("input.txt", "r", stdin);			\
     freopen("output.txt", "w", stdout);
 #define all(c) c.begin(), c.end()
 #define inf 1000000000000000001
 #define epsilon 1e-6
 #define int ll
-#define RUN_T			 \
-    int _t; 			 \
-    cin >> _t;			 \
-    while (_t--)			 
-#define tr(...)				\
-if (DEBUG) {				\
-cout << __FUNCTION__ << ' ' << __LINE__ << " = ";				\
-trace(#__VA_ARGS__, __VA_ARGS__);				\
+#define RUN_T			\
+    int _t;			\
+    cin >> _t;			\
+    while (_t--)
+#define tr(...)			\
+if (DEBUG) {			\
+    cout << __FUNCTION__ << ' ' << __LINE__ << " = ";			\
+    trace(#__VA_ARGS__, __VA_ARGS__);			\
 }
 template <typename S, typename T>
 ostream &operator<<(ostream &out, pair<S, T> const &p) {
@@ -104,36 +104,47 @@ void trace(const char *names, T &&arg1, Args &&... args) {
 template <typename T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 int gcd(int a, int b) {
      if (b == 0)
-        return a;
-    return gcd(b, a % b);
+           return a;
+     return gcd(b, a % b);
 }
-void add_self(int& a, int b) {
-     a += b;
-     if(a >= MOD) {
-           a -= MOD;
+int n;
+vector<int>dp,v;
+int recur(int i, string& s, int x){
+    if( i == n - 1){
+        if(s[i] == '1'){
+            return max( x^v[i], x);
+        }else{
+            return min( x^v[i], x);
+        }
     }
+    int& ans = dp[i];
+    if(ans != -1) return ans;
+    if(s[i] == '1'){
+        ans = recur(i + 1, s, x ^ v[i]) | recur(i + 1, s, x);
+    }else{
+        ans = recur(i + 1, s, x ^ v[i]) | recur(i + 1, s, x);
+    }
+    return ans;
 }
-int32_t main() {
-    int n;
-    cin >> n;
-    vector<int>v(n);
-    set<int>st, st1;
-    for(int i = 0; i < n; i++){
-        cin>>v[i];
-        st.insert(v[i]);
+int32_t main(){
+    _
+    RUN_T{
+        int x;
+        cin >> n;
+        v.clear();
+        dp.clear();
+        dp.resize(n , -1);
+        for(int i = 0 ; i < n; i++){
+            cin >> x;
+            v.pb(x);
+        }
+        string s;
+        cin >> s;
+        int ans = recur(0, s, 0);
+        if( ans != 0){
+            cout << 1 << endl;
+        }else{
+            cout << 0 << endl;
+        }
     }
-    for(int i = 0; i < n; i++){
-        cin>>v[i];
-        st1.insert(v[i]);
-    }
-    tr(st);
-    tr(st1);
-    int mn;
-    int x;
-    cin >> n;
-    for(int i = 0 ;i < n; i++){
-        cin >> x;
-        v.pb(x);
-    }
-    // tr(st.size());
 }
